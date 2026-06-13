@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MM Pharmacy — نظام إدارة المواد</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.8.0/tabler-icons.min.css">
+<style>
+:root{
+  --bg-primary:#ffffff;--bg-secondary:#f8f8f6;--bg-tertiary:#f1efe8;
+  --text-primary:#1a1a18;--text-secondary:#5f5e5a;--text-tertiary:#888780;
+  --border-light:rgba(0,0,0,0.1);--border-mid:rgba(0,0,0,0.18);
+  --radius-md:8px;--radius-lg:12px;
+  --blue-50:#E6F1FB;--blue-100:#B5D4F4;--blue-600:#185FA5;--blue-800:#0C447C;
+  --teal-50:#E1F5EE;--teal-600:#1D9E75;--teal-800:#085041;
+  --purple-50:#EEEDFE;--purple-600:#534AB7;--purple-800:#3C3489;
+  --amber-50:#FAEEDA;--amber-800:#633806;
+  --red-50:#FCEBEB;--red-100:#F7C1C1;--red-800:#791F1F;
+  --green-50:#EAF3DE;--green-800:#27500A;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg-primary:#1e1e1c;--bg-secondary:#252523;--bg-tertiary:#161614;
+  --text-primary:#f0ede6;--text-secondary:#b4b2a9;--text-tertiary:#888780;
+  --border-light:rgba(255,255,255,0.1);--border-mid:rgba(255,255,255,0.18);
+}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-tertiary);color:var(--text-primary);min-height:100vh;}
+body.ltr{direction:ltr;}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.login-box{background:var(--bg-primary);border:0.5px solid var(--border-light);border-radius:var(--radius-lg);padding:2rem;width:340px;max-width:95vw;}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;justify-content:center;}
+.login-logo-icon{width:40px;height:40px;border-radius:var(--radius-md);background:var(--blue-600);display:flex;align-items:center;justify-content:center;}
+.login-logo-icon i{color:#fff;font-size:20px;}
+.login-title{font-size:18px;font-weight:600;}
+.login-sub{font-size:11px;color:var(--text-secondary);margin-top:2px;}
+.login-field{margin-bottom:1rem;}
+.login-label{font-size:12px;color:var(--text-secondary);margin-bottom:6px;display:block;font-weight:500;}
+.login-input{width:100%;padding:9px 12px;border:0.5px solid var(--border-mid);border-radius:var(--radius-md);background:var(--bg-primary);color:var(--text-primary);font-size:13px;font-family:inherit;}
+.login-input:focus{outline:none;border-color:var(--blue-600);}
+.login-btn{width:100%;padding:10px;border-radius:var(--radius-md);background:var(--blue-600);color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:.5rem;}
+.login-btn:hover{background:var(--blue-800);}
+.login-error{font-size:12px;color:var(--red-800);background:var(--red-50);padding:8px 12px;border-radius:var(--radius-md);margin-top:.75rem;display:none;text-align:center;}
+.login-lang{display:flex;justify-content:center;gap:8px;margin-top:1.25rem;}
+.login-lang button{font-size:12px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--border-mid);background:transparent;cursor:pointer;color:var(--text-secondary);font-family:inherit;}
+.login-lang button.active{background:var(--blue-50);color:var(--blue-800);border-color:var(--blue-100);}
+
+/* TOPBAR */
+.topbar{background:var(--bg-primary);border-bottom:0.5px solid var(--border-light);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;border-radius:var(--radius-md);background:var(--blue-600);display:flex;align-items:center;justify-content:center;}
+.logo-icon i{color:#fff;font-size:18px;}
+.logo-text{font-size:15px;font-weight:600;}
+.logo-sub{font-size:11px;color:var(--text-secondary);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.lang-btn{font-size:12px;padding:4px 10px;border-radius:var(--radius-md);border:0.5px solid var(--border-mid);background:transparent;cursor:pointer;color:var(--text-secondary);}
+.lang-btn.active{background:var(--blue-50);color:var(--blue-800);border-color:var(--blue-100);}
+.role-badge{font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500;display:flex;align-items:center;gap:5px;}
+.role-mmc{background:var(--blue-50);color:var(--blue-800);}
+.role-aid{background:var(--teal-50);color:var(--teal-800);}
+.role-tech{background:var(--purple-50);color:var(--purple-800);}
+.logout-btn{font-size:12px;padding:5px 12px;border-radius:var(--radius-md);border:0.5px solid var(--border-mid);background:transparent;cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;gap:5px;font-family:inherit;}
+.logout-btn:hover{background:var(--red-50);color:var(--red-800);}
+
+/* LAYOUT */
+.app{display:flex;flex-direction:column;min-height:100vh;}
+.main{display:flex;flex:1;height:calc(100vh - 56px);}
+.sidebar{width:220px;background:var(--bg-primary);border-inline-end:0.5px solid var(--border-light);padding:1rem 0;flex-shrink:0;overflow-y:auto;}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.08em;padding:0 1.25rem;margin:.75rem 0 .4rem;}
+.sidebar-section{padding:0 .75rem;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-md);cursor:pointer;font-size:13px;color:var(--text-secondary);margin-bottom:2px;transition:all .15s;user-select:none;}
+.nav-item:hover{background:var(--bg-secondary);color:var(--text-primary);}
+.nav-item.active{background:var(--blue-50);color:var(--blue-600);}
+.nav-item i{font-size:17px;width:20px;}
+.nav-badge{margin-inline-start:auto;font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600;background:var(--blue-100);color:var(--blue-800);}
+.content{flex:1;overflow-y:auto;padding:1.5rem;}
+.page{display:none;}.page.active{display:block;}
+.page-header{margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.page-title{font-size:20px;font-weight:600;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--text-secondary);}
+
+/* CARDS */
+.card{background:var(--bg-primary);border:0.5px solid var(--border-light);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:0.5px solid var(--border-light);}
+.card-title{font-size:14px;font-weight:600;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:1.5rem;}
+.stat-card{background:var(--bg-secondary);border-radius:var(--radius-md);padding:1rem;text-align:center;}
+.stat-num{font-size:26px;font-weight:600;}
+.stat-lbl{font-size:12px;color:var(--text-secondary);margin-top:3px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* TABLE */
+.med-table{width:100%;border-collapse:collapse;font-size:13px;}
+.med-table th{text-align:start;font-weight:600;color:var(--text-secondary);font-size:11px;padding:6px 8px;border-bottom:0.5px solid var(--border-light);background:var(--bg-secondary);}
+.med-table td{padding:9px 8px;border-bottom:0.5px solid var(--border-light);}
+.med-table tr:last-child td{border-bottom:none;}
+.med-table tr:hover td{background:var(--bg-secondary);}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:var(--radius-md);border:0.5px solid var(--border-mid);background:transparent;cursor:pointer;font-size:13px;color:var(--text-primary);display:inline-flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit;}
+.btn:hover{background:var(--bg-secondary);}
+.btn-primary{background:var(--blue-600);color:#fff;border-color:var(--blue-600);}
+.btn-primary:hover{background:var(--blue-800);}
+.btn-success{background:var(--teal-600);color:#fff;border-color:var(--teal-600);}
+.btn-success:hover{background:var(--teal-800);}
+.btn-danger{background:var(--red-800);color:#fff;border-color:var(--red-800);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-xs{padding:3px 9px;font-size:11px;}
+
+/* PILLS & TAGS */
+.status-pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;white-space:nowrap;}
+.s-pending{background:var(--amber-50);color:var(--amber-800);}
+.s-submitted{background:var(--blue-50);color:var(--blue-800);}
+.s-reviewed{background:var(--purple-50);color:var(--purple-800);}
+.s-completed{background:var(--green-50);color:var(--green-800);}
+.area-tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;}
+.area-ip{background:var(--purple-50);color:var(--purple-800);}
+.area-opp{background:var(--amber-50);color:var(--amber-800);}
+.type-tag{font-size:11px;padding:2px 8px;border-radius:20px;}
+.type-daily{background:var(--red-50);color:var(--red-800);}
+.type-twice{background:var(--amber-50);color:var(--amber-800);}
+.type-weekly{background:var(--teal-50);color:var(--teal-800);}
+.nil-tag{background:var(--red-50);color:var(--red-800);font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;}
+.req-tag{background:var(--teal-50);color:var(--teal-800);font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;}
+.sched-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:0.5px solid var(--border-light);}
+
+/* FILTER ROW */
+.filter-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
+.filter-btn{font-size:12px;padding:5px 14px;border-radius:20px;border:0.5px solid var(--border-mid);background:transparent;cursor:pointer;color:var(--text-secondary);font-family:inherit;}
+.filter-btn.active{background:var(--blue-50);color:var(--blue-600);border-color:var(--blue-100);}
+.filter-select{font-size:12px;padding:5px 10px;border-radius:var(--radius-md);border:0.5px solid var(--border-mid);background:var(--bg-primary);color:var(--text-primary);font-family:inherit;cursor:pointer;}
+
+/* CHECKLIST */
+.check-box{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border-mid);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.check-box.checked{background:var(--blue-600);border-color:var(--blue-600);}
+.check-box.checked i{color:#fff;font-size:13px;}
+.tech-select{font-size:12px;padding:5px 10px;border:0.5px solid var(--border-mid);border-radius:var(--radius-md);background:var(--bg-primary);color:var(--text-primary);cursor:pointer;font-family:inherit;min-width:110px;}
+.tech-select.nil{background:var(--red-50);color:var(--red-800);border-color:var(--red-100);}
+.tech-select.requested{background:var(--teal-50);color:var(--teal-800);border-color:#9FE1CB;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg-primary);border-radius:var(--radius-lg);border:0.5px solid var(--border-mid);width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;padding:1.5rem;}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
+.form-row{margin-bottom:1rem;}
+.form-label{font-size:12px;color:var(--text-secondary);margin-bottom:6px;display:block;font-weight:500;}
+.form-select,.form-input{width:100%;padding:8px 12px;border:0.5px solid var(--border-mid);border-radius:var(--radius-md);background:var(--bg-primary);color:var(--text-primary);font-size:13px;font-family:inherit;cursor:pointer;}
+.form-input{cursor:text;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.med-select-list{max-height:200px;overflow-y:auto;border:0.5px solid var(--border-light);border-radius:var(--radius-md);}
+.med-select-item{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border-light);}
+.med-select-item:last-child{border-bottom:none;}
+.med-select-item:hover{background:var(--bg-secondary);}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;border-top:0.5px solid var(--border-light);padding-top:1rem;}
+.modal-note{font-size:12px;color:var(--text-secondary);padding:8px 12px;background:var(--bg-secondary);border-radius:var(--radius-md);margin-top:8px;}
+.section-title{font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:1rem 0 .5rem;}
+
+/* MISC */
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.sent-indicator{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--teal-600);padding:4px 10px;background:var(--teal-50);border-radius:20px;}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-secondary);font-size:13px;}
+.empty-state i{font-size:42px;margin-bottom:12px;display:block;opacity:.35;}
+.divider{height:0.5px;background:var(--border-light);margin:1rem 0;}
+.info-box{padding:10px 14px;border-radius:var(--radius-md);font-size:12px;background:var(--blue-50);color:var(--blue-800);border:0.5px solid var(--blue-100);display:flex;align-items:flex-start;gap:8px;}
+.report-row{background:var(--bg-primary);border:0.5px solid var(--border-light);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem;cursor:pointer;transition:border-color .15s;}
+.report-row:hover{border-color:var(--border-mid);}
+
+/* SCHEDULE BADGE */
+.sched-info{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary);}
+
+@media(max-width:768px){.sidebar{display:none;}.two-col,.form-grid,.form-grid-3{grid-template-columns:1fr;}.topbar{padding:0 1rem;}.content{padding:1rem;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon"><i class="ti ti-medicine-syrup"></i></div>
+      <div><div class="login-title">MM Pharmacy</div><div class="login-sub" id="ll-sub">نظام إدارة المواد</div></div>
+    </div>
+    <div class="login-field"><label class="login-label" id="ll-user">اسم المستخدم</label><input class="login-input" id="login-username" type="text" placeholder="Username"></div>
+    <div class="login-field"><label class="login-label" id="ll-pass">كلمة المرور</label><input class="login-input" id="login-password" type="password" placeholder="Password"></div>
+    <button class="login-btn" onclick="doLogin()" id="ll-btn">تسجيل الدخول</button>
+    <div class="login-error" id="login-error">اسم المستخدم أو كلمة المرور غير صحيحة</div>
+    <div class="login-lang">
+      <button class="active" onclick="setLang('ar')" id="lbtn-ar">العربية</button>
+      <button onclick="setLang('en')" id="lbtn-en">English</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="main-app" style="display:none">
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-medicine-syrup"></i></div>
+      <div><div class="logo-text">MM Pharmacy</div><div class="logo-sub" id="logo-sub">نظام إدارة المواد</div></div>
+    </div>
+    <div class="topbar-right">
+      <span class="role-badge role-mmc" id="role-badge"><i class="ti ti-user" style="font-size:13px"></i><span id="role-name"></span></span>
+      <button class="lang-btn active" onclick="setLang('ar')" id="btn-ar">AR</button>
+      <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+      <button class="logout-btn" onclick="doLogout()"><i class="ti ti-logout" style="font-size:14px"></i><span id="lbl-logout">خروج</span></button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <div class="sidebar-label" id="snav-main">رئيسي</div>
+      <div class="sidebar-section">
+        <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard"><i class="ti ti-layout-dashboard"></i><span id="snav-dash">لوحة التحكم</span></div>
+      </div>
+      <div class="sidebar-label" id="snav-ops">العمليات</div>
+      <div class="sidebar-section">
+        <div class="nav-item" onclick="showPage('checklists')" id="nav-checklists"><i class="ti ti-clipboard-check"></i><span id="snav-chk">القوائم</span><span class="nav-badge" id="badge-chk">0</span></div>
+        <div class="nav-item" id="nav-schedules" onclick="showPage('schedules')" style="display:none"><i class="ti ti-calendar-repeat"></i><span id="snav-sch">الجداول</span></div>
+        <div class="nav-item" id="nav-reports" onclick="showPage('reports')" style="display:none"><i class="ti ti-file-spreadsheet"></i><span id="snav-rep">التقارير</span><span class="nav-badge" id="badge-rep">0</span></div>
+        <div class="nav-item" id="nav-performance" onclick="showPage('performance')" style="display:none"><i class="ti ti-chart-bar"></i><span id="snav-perf">الأداء</span></div>
+        <div class="nav-item" id="nav-workflow" onclick="showPage('workflow')" style="display:none"><i class="ti ti-route"></i><span id="snav-workflow">مراقبة المسار</span></div>
+        <div class="nav-item" id="nav-specialpdf" onclick="showPage('specialpdf')" style="display:none"><i class="ti ti-file-type-pdf"></i><span id="snav-specialpdf">القوائم الخاصة</span><span class="nav-badge" id="badge-special">0</span></div>
+        <div class="nav-item" id="nav-zero" onclick="showPage('zero')" style="display:none"><i class="ti ti-alert-triangle"></i><span id="snav-zero">Zero / NIL</span></div>
+        <div class="nav-item" onclick="showPage('medications')" id="nav-medications"><i class="ti ti-pill"></i><span id="snav-med">الأدوية</span></div>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header"><div><div class="page-title" id="dash-title">لوحة التحكم</div><div class="page-sub" id="dash-sub">نظرة عامة</div></div></div>
+        <div class="stats-grid" id="dash-stats"></div>
+        <div class="two-col"><div class="card"><div class="card-header"><span class="card-title" id="lbl-recent">آخر النشاط</span></div><div id="dash-recent"></div></div>
+        <div class="card"><div class="card-header"><span class="card-title" id="lbl-quick">إجراءات سريعة</span></div><div id="dash-quick" style="display:flex;flex-direction:column;gap:8px"></div></div></div>
+      </div>
+
+      <!-- CHECKLISTS -->
+      <div class="page" id="page-checklists">
+        <div class="page-header">
+          <div><div class="page-title" id="chk-title">القوائم</div><div class="page-sub" id="chk-sub">قوائم الفحص المخصصة لك</div></div>
+        </div>
+        <div class="filter-row" id="chk-filters">
+          <button class="filter-btn active" onclick="setChkFilter('all',this)">الكل</button>
+          <button class="filter-btn" onclick="setChkFilter('pending',this)" id="fchk-pending">قيد الانتظار</button>
+          <button class="filter-btn" onclick="setChkFilter('submitted',this)" id="fchk-submitted">مرسلة للـ TECH</button>
+          <button class="filter-btn" onclick="setChkFilter('reviewed',this)" id="fchk-reviewed">مراجعة MMC</button>
+        </div>
+        <div id="chk-container"></div>
+      </div>
+
+      <!-- SCHEDULES (MMC) -->
+      <div class="page" id="page-schedules">
+        <div class="page-header">
+          <div><div class="page-title" id="sch-title">الجداول</div><div class="page-sub" id="sch-sub">إدارة القوائم المجدولة</div></div>
+          <button class="btn btn-primary" onclick="openScheduleModal()"><i class="ti ti-plus"></i><span id="lbl-newsch">جدول جديد</span></button>
+        </div>
+        <div id="sch-container"></div>
+      </div>
+
+      <!-- REPORTS (MMC) -->
+      <div class="page" id="page-reports">
+        <div class="page-header">
+          <div><div class="page-title" id="rep-title">التقارير</div><div class="page-sub" id="rep-sub">تقارير الفحص المكتملة</div></div>
+          <button class="btn btn-success" onclick="exportExcel()"><i class="ti ti-file-spreadsheet"></i><span id="lbl-export">تصدير Excel</span></button>
+        </div>
+        <!-- Filters -->
+        <div class="card" style="margin-bottom:1rem">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <div><label class="form-label" style="margin-bottom:4px" id="lbl-fdate">التاريخ من</label><input type="date" class="form-input" id="rep-date-from" style="width:140px" onchange="renderReports()"></div>
+            <div><label class="form-label" style="margin-bottom:4px" id="lbl-fdate2">إلى</label><input type="date" class="form-input" id="rep-date-to" style="width:140px" onchange="renderReports()"></div>
+            <div><label class="form-label" style="margin-bottom:4px" id="lbl-farea">المنطقة</label><select class="form-select" id="rep-filter-area" style="width:130px" onchange="renderReports()"><option value="all">الكل</option><option value="ip">IP</option><option value="opp">OPP</option></select></div>
+            <div><label class="form-label" style="margin-bottom:4px" id="lbl-ftype">النوع</label><select class="form-select" id="rep-filter-type" style="width:150px" onchange="renderReports()"><option value="all">الكل</option><option value="daily" id="fopt-daily">يومية</option><option value="twice_weekly" id="fopt-twice">مرتين</option><option value="weekly" id="fopt-weekly">أسبوعية</option></select></div>
+            <button class="btn btn-sm" onclick="clearRepFilters()" style="margin-top:16px"><i class="ti ti-x"></i><span id="lbl-clear">مسح</span></button>
+          </div>
+        </div>
+        <div id="rep-container"></div>
+        <div id="rep-detail" style="display:none" class="card"><div class="card-header"><span class="card-title" id="lbl-repdetail">تفاصيل التقرير</span><button class="btn btn-sm" onclick="document.getElementById('rep-detail').style.display='none'"><i class="ti ti-x"></i></button></div><div id="rep-detail-body"></div></div>
+      </div>
+
+      <!-- PERFORMANCE (MMC) -->
+      <div class="page" id="page-performance">
+        <div class="page-header">
+          <div><div class="page-title" id="perf-title">متابعة الأداء</div><div class="page-sub" id="perf-sub">قياس إنجاز AID و TECH حسب مدة العمل الفعلية</div></div>
+          <button class="btn btn-primary" onclick="openExemptionModal()"><i class="ti ti-user-pause"></i><span>إعفاء موظف</span></button>
+        </div>
+        <div class="filter-row">
+          <select class="filter-select" id="perf-range" onchange="renderPerformance()"><option value="today">اليوم</option><option value="week">هذا الأسبوع</option><option value="month">هذا الشهر</option><option value="all">الكل</option></select>
+          <select class="filter-select" id="perf-area" onchange="renderPerformance()"><option value="all">كل المناطق</option><option value="ip">IP</option><option value="opp">OPP</option></select>
+          <select class="filter-select" id="perf-role" onchange="renderPerformance()"><option value="all">كل الأدوار</option><option value="aid">AID</option><option value="tech">TECH</option></select>
+        </div>
+        <div id="perf-container"></div>
+        <div class="card"><div class="card-header"><span class="card-title">الإعفاءات الحالية</span></div><div id="exempt-container"></div></div>
+      </div>
+
+
+      <!-- WORKFLOW MONITOR (MMC) -->
+      <div class="page" id="page-workflow">
+        <div class="page-header">
+          <div><div class="page-title">مراقبة مسار العمل</div><div class="page-sub">متابعة موقع كل قائمة والموظف المسؤول عنها حالياً</div></div>
+        </div>
+        <div id="workflow-container"></div>
+      </div>
+
+      <!-- SPECIAL PDF LISTS -->
+      <div class="page" id="page-specialpdf">
+        <div class="page-header">
+          <div><div class="page-title">القوائم الخاصة PDF</div><div class="page-sub">IP-TECH → IP-AID → IP-TECH → MMC</div></div>
+        </div>
+        <div id="specialpdf-container"></div>
+      </div>
+
+      <!-- ZERO / NIL DASHBOARD (MMC) -->
+      <div class="page" id="page-zero">
+        <div class="page-header">
+          <div><div class="page-title">Zero / NIL Dashboard</div><div class="page-sub">تجميع جميع العناصر NIL من القوائم المجدولة والـ PDF</div></div>
+          <button class="btn btn-success" onclick="exportZeroCsv()"><i class="ti ti-file-spreadsheet"></i><span>تصدير Excel</span></button>
+        </div>
+        <div class="filter-row">
+          <select class="filter-select" id="zero-area" onchange="renderZeroDashboard()"><option value="all">كل المناطق</option><option value="ip">IP</option><option value="opp">OPP</option></select>
+          <input class="form-input" style="width:160px" type="date" id="zero-from" onchange="renderZeroDashboard()">
+          <input class="form-input" style="width:160px" type="date" id="zero-to" onchange="renderZeroDashboard()">
+        </div>
+        <div id="zero-container"></div>
+      </div>
+
+      <!-- MEDICATIONS -->
+      <div class="page" id="page-medications">
+        <div class="page-header"><div><div class="page-title" id="med-title">الأدوية</div><div class="page-sub" id="med-sub">جميع الأدوية مرتبة أبجدياً</div></div></div>
+        <div class="card"><table class="med-table"><thead><tr><th id="th-name">اسم الدواء</th><th id="th-oracle">Oracle #</th><th id="th-cat">التصنيف</th><th id="th-area">المنطقة</th></tr></thead><tbody id="med-body"></tbody></table></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- EXEMPTION MODAL -->
+<div class="modal-overlay" id="exempt-modal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-user-pause" style="color:var(--blue-600)"></i><span>إضافة إعفاء موظف</span></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">الموظف</label><select class="form-select" id="ex-user"><option>IP-AID</option><option>OPP-AID</option><option>IP-TECH</option><option>OPP-TECH</option></select></div>
+      <div class="form-row"><label class="form-label">النوع</label><select class="form-select" id="ex-type"><option value="leave">إجازة</option><option value="permission">استئذان</option><option value="assignment">تكليف آخر</option><option value="admin">عذر إداري</option></select></div>
+      <div class="form-row"><label class="form-label">من</label><input class="form-input" id="ex-from" type="datetime-local"></div>
+      <div class="form-row"><label class="form-label">إلى</label><input class="form-input" id="ex-to" type="datetime-local"></div>
+    </div>
+    <div class="form-row"><label class="form-label">الإجراء</label><select class="form-select" id="ex-mode"><option value="exclude_late">إلغاء احتساب Late فقط</option><option value="stop_assignment">إيقاف إصدار القوائم للموظف خلال الفترة</option></select></div>
+    <div class="form-row"><label class="form-label">السبب</label><input class="form-input" id="ex-reason" placeholder="مثال: إجازة سنوية"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeExemptionModal()">إلغاء</button><button class="btn btn-primary" onclick="saveExemption()">حفظ الإعفاء</button></div>
+  </div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="modal-overlay" id="sch-modal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-calendar-repeat" style="color:var(--blue-600)"></i><span id="schm-title">إنشاء جدول فحص جديد</span></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label" id="schm-lname">اسم القائمة</label><input class="form-input" id="sch-name" placeholder="مثال: فحص IP اليومي"></div>
+      <div class="form-row"><label class="form-label" id="schm-larea">المنطقة</label><select class="form-select" id="sch-area"><option value="ip">IP - العناية المركزة</option><option value="opp">OPP - العيادات الخارجية</option></select></div>
+      <div class="form-row"><label class="form-label" id="schm-lfreq">التكرار</label><select class="form-select" id="sch-freq"><option value="daily" id="schopt-daily">يومي</option><option value="twice_weekly" id="schopt-twice">مرتين أسبوعياً</option><option value="weekly" id="schopt-weekly">أسبوعي</option></select></div>
+      <div class="form-row"><label class="form-label" id="schm-lassign">المسؤول الأول</label><select class="form-select" id="sch-assign"><option value="aid">AID - مساعد المخزن</option><option value="tech">TECH - التقني مباشرة</option></select></div>
+      <div class="form-row"><label class="form-label">وقت إصدار القائمة</label><input class="form-input" id="sch-release" type="time" value="08:00"></div>
+      <div class="form-row"><label class="form-label">مدة المرحلة الأولى / دقيقة</label><input class="form-input" id="sch-first-duration" type="number" min="1" value="120"></div>
+      <div class="form-row"><label class="form-label">المسؤول الثاني</label><select class="form-select" id="sch-second"><option value="none">لا يوجد</option><option value="tech">TECH</option></select></div>
+      <div class="form-row"><label class="form-label">مدة المرحلة الثانية / دقيقة</label><input class="form-input" id="sch-second-duration" type="number" min="0" value="60"></div>
+      <div class="form-row"><label class="form-label">فترة السماح / دقيقة</label><input class="form-input" id="sch-grace" type="number" min="0" value="15"></div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">استيراد قائمة من Excel / Word</label>
+      <input class="form-input" id="import-file" type="file" accept=".xlsx,.xls,.csv,.docx" onchange="handleImportFile(event)">
+      <div class="modal-note">الأعمدة المقبولة: Medication Name و Oracle Number. المنطقة تؤخذ من خيار المنطقة أعلاه.</div>
+      <div id="import-preview" style="margin-top:8px"></div>
+    </div>
+    <div class="form-row"><label class="form-label" id="schm-lmeds">اختر الأدوية</label>
+      <input class="form-input" id="med-search" placeholder="بحث..." style="margin-bottom:6px" oninput="filterMedList()">
+      <div style="display:flex;gap:8px;margin-bottom:6px">
+        <button class="btn btn-xs" onclick="selectAllMeds()"><i class="ti ti-check-all"></i><span id="lbl-selall">تحديد الكل</span></button>
+        <button class="btn btn-xs" onclick="clearAllMeds()"><i class="ti ti-x"></i><span id="lbl-clrall">إلغاء الكل</span></button>
+      </div>
+      <div class="med-select-list" id="modal-med-list"></div>
+    </div>
+    <div class="modal-note" id="schm-note">سيتم إنشاء نسخة جديدة من القائمة تلقائياً حسب الجدول المحدد</div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeSchModal()"><span id="schm-cancel">إلغاء</span></button>
+      <button class="btn btn-primary" onclick="saveSchedule()"><i class="ti ti-check"></i><span id="schm-save">حفظ الجدول</span></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+// ============ ACCOUNTS ============
+const ACCOUNTS = {
+  'MMC':      {password:'Aa@123',role:'mmc',area:'all'},
+  'IP-TECH':  {password:'Aa@123',role:'tech',area:'ip'},
+  'OPP-TECH': {password:'Aa@123',role:'tech',area:'opp'},
+  'IP-AID':   {password:'Aa@123',role:'aid',area:'ip'},
+  'OPP-AID':  {password:'Aa@123',role:'aid',area:'opp'}
+};
+let currentUser=null, currentRole='mmc', userArea='all', lang='ar', currentPage='dashboard', chkFilter='all';
+
+// ============ MEDICATIONS ============
+const medications=[
+  {id:1,name:"Amoxicillin 500mg",oracle:"ORX-1024",cat:"Antibiotic",area:"ip"},
+  {id:2,name:"Aspirin 100mg",oracle:"ORX-1031",cat:"Analgesic",area:"ip"},
+  {id:3,name:"Atorvastatin 20mg",oracle:"ORX-1045",cat:"Statin",area:"opp"},
+  {id:4,name:"Ceftriaxone 1g",oracle:"ORX-1058",cat:"Antibiotic",area:"ip"},
+  {id:5,name:"Ciprofloxacin 500mg",oracle:"ORX-1062",cat:"Antibiotic",area:"opp"},
+  {id:6,name:"Diazepam 5mg",oracle:"ORX-1077",cat:"Sedative",area:"ip"},
+  {id:7,name:"Enalapril 10mg",oracle:"ORX-1083",cat:"ACE Inhibitor",area:"opp"},
+  {id:8,name:"Furosemide 40mg",oracle:"ORX-1091",cat:"Diuretic",area:"ip"},
+  {id:9,name:"Gentamicin 80mg",oracle:"ORX-1104",cat:"Antibiotic",area:"ip"},
+  {id:10,name:"Heparin 5000u",oracle:"ORX-1112",cat:"Anticoagulant",area:"ip"},
+  {id:11,name:"Ibuprofen 400mg",oracle:"ORX-1126",cat:"NSAID",area:"opp"},
+  {id:12,name:"Ketamine 200mg",oracle:"ORX-1139",cat:"Anesthetic",area:"ip"},
+  {id:13,name:"Levofloxacin 500mg",oracle:"ORX-1147",cat:"Antibiotic",area:"opp"},
+  {id:14,name:"Metformin 500mg",oracle:"ORX-1155",cat:"Antidiabetic",area:"opp"},
+  {id:15,name:"Metronidazole 500mg",oracle:"ORX-1162",cat:"Antibiotic",area:"ip"},
+  {id:16,name:"Morphine 10mg",oracle:"ORX-1178",cat:"Opioid",area:"ip"},
+  {id:17,name:"Omeprazole 20mg",oracle:"ORX-1183",cat:"PPI",area:"opp"},
+  {id:18,name:"Paracetamol 500mg",oracle:"ORX-1195",cat:"Analgesic",area:"ip"},
+  {id:19,name:"Ranitidine 150mg",oracle:"ORX-1208",cat:"H2 Blocker",area:"opp"},
+  {id:20,name:"Salbutamol Inhaler",oracle:"ORX-1214",cat:"Bronchodilator",area:"opp"},
+  {id:21,name:"Tramadol 50mg",oracle:"ORX-1229",cat:"Opioid",area:"ip"},
+  {id:22,name:"Vancomycin 500mg",oracle:"ORX-1237",cat:"Antibiotic",area:"ip"},
+  {id:23,name:"Warfarin 5mg",oracle:"ORX-1245",cat:"Anticoagulant",area:"opp"},
+  {id:24,name:"Zithromax 250mg",oracle:"ORX-1251",cat:"Antibiotic",area:"opp"}
+];
+
+// ============ DATA ============
+// Schedules: created by MMC, define recurring checklists
+let schedules=[
+  {id:'SCH001',name:'فحص IP اليومي',area:'ip',freq:'daily',assignFirst:'aid',items:[1,4,6,8,10,12,15,16,18,21,22],active:true,createdAt:'2026-06-01'},
+  {id:'SCH002',name:'فحص OPP مرتين أسبوعياً',area:'opp',freq:'twice_weekly',assignFirst:'aid',items:[3,5,7,11,13,14,17,19,20,23,24],active:true,createdAt:'2026-06-01'},
+  {id:'SCH003',name:'فحص IP الأسبوعي',area:'ip',freq:'weekly',assignFirst:'tech',items:[2,9,10,16,22],active:true,createdAt:'2026-05-28'}
+];
+
+// Checklist instances generated from schedules
+let instances=[
+  {id:'CKL001',schedId:'SCH001',area:'ip',freq:'daily',assignFirst:'aid',items:[1,4,6,8,10,12,15,16,18,21,22],checkedItems:[1,4,8,10,16,18],techNotes:{},status:'submitted',date:'2026-06-05',name:'فحص IP اليومي'},
+  {id:'CKL002',schedId:'SCH002',area:'opp',freq:'twice_weekly',assignFirst:'aid',items:[3,5,7,11,13,14,17,19,20,23,24],checkedItems:[],techNotes:{},status:'pending',date:'2026-06-05',name:'فحص OPP مرتين أسبوعياً'},
+  {id:'CKL003',schedId:'SCH003',area:'ip',freq:'weekly',assignFirst:'tech',items:[2,9,10,16,22],checkedItems:[],techNotes:{9:'nil',16:'requested',22:'nil'},status:'reviewed',date:'2026-06-04',name:'فحص IP الأسبوعي'},
+  {id:'CKL004',schedId:'SCH001',area:'ip',freq:'daily',assignFirst:'aid',items:[1,4,6,8,10,12,15,16,18,21,22],checkedItems:[1,4,6,8,10,12,15,16,18,21,22],techNotes:{},status:'completed',date:'2026-06-04',name:'فحص IP اليومي'},
+  {id:'CKL005',schedId:'SCH002',area:'opp',freq:'twice_weekly',assignFirst:'aid',items:[3,5,7,11,13,14,17,19,20,23,24],checkedItems:[3,7,11,17,19,20],techNotes:{5:'requested',13:'nil',14:'requested',23:'nil',24:'nil'},status:'reviewed',date:'2026-06-03',name:'فحص OPP مرتين أسبوعياً'}
+];
+
+// ============ TRANSLATIONS ============
+const TR={
+  ar:{
+    dash_title:'لوحة التحكم',dash_sub:'نظرة عامة على نظام إدارة المواد',
+    snav_main:'رئيسي',snav_ops:'العمليات',snav_dash:'لوحة التحكم',snav_chk:'القوائم',snav_sch:'الجداول',snav_rep:'التقارير',snav_perf:'الأداء',snav_workflow:'مراقبة المسار',snav_specialpdf:'القوائم الخاصة',snav_zero:'Zero / NIL',snav_med:'الأدوية',
+    lbl_logout:'خروج',logo_sub:'نظام إدارة المواد',
+    lbl_recent:'آخر النشاط',lbl_quick:'إجراءات سريعة',
+    chk_title:'القوائم',chk_sub:'قوائم الفحص المخصصة لك',
+    sch_title:'الجداول',sch_sub:'إدارة القوائم المجدولة',
+    rep_title:'التقارير',rep_sub:'تقارير الفحص المكتملة',
+    med_title:'الأدوية',med_sub:'جميع الأدوية مرتبة أبجدياً',
+    lbl_newsch:'جدول جديد',lbl_export:'تصدير Excel',
+    lbl_fdate:'من تاريخ',lbl_fdate2:'إلى تاريخ',lbl_farea:'المنطقة',lbl_ftype:'النوع',lbl_clear:'مسح الفلتر',
+    th_name:'اسم الدواء',th_oracle:'Oracle #',th_cat:'التصنيف',th_area:'المنطقة',
+    schm_title:'إنشاء جدول فحص جديد',schm_lname:'اسم القائمة',schm_larea:'المنطقة',schm_lfreq:'التكرار',schm_lassign:'المسؤول الأول',schm_lmeds:'اختر الأدوية',
+    schm_note:'سيتم إنشاء نسخة جديدة تلقائياً حسب الجدول',schm_cancel:'إلغاء',schm_save:'حفظ الجدول',
+    lbl_selall:'تحديد الكل',lbl_clrall:'إلغاء الكل',
+    s_pending:'قيد الانتظار',s_submitted:'بانتظار TECH',s_reviewed:'بانتظار MMC',s_completed:'مكتملة',
+    type_daily:'يومي',type_twice:'مرتين',type_weekly:'أسبوعي',
+    send_to_tech:'إرسال إلى TECH',send_to_mmc:'إرسال إلى MMC',
+    lbl_checked:'✓ موجود',lbl_missing:'✗ ناقص',lbl_nil:'NIL',lbl_req:'REQUESTED',
+    fchk_all:'الكل',fchk_pend:'قيد الانتظار',fchk_sub:'بانتظار TECH',fchk_rev:'بانتظار MMC',
+    lbl_repdetail:'تفاصيل التقرير',
+    ll_sub:'نظام إدارة المواد',ll_user:'اسم المستخدم',ll_pass:'كلمة المرور',ll_btn:'تسجيل الدخول',ll_err:'اسم المستخدم أو كلمة المرور غير صحيحة',
+    schopt_daily:'يومي',schopt_twice:'مرتين أسبوعياً',schopt_weekly:'أسبوعي',
+    fopt_daily:'يومية',fopt_twice:'مرتين',fopt_weekly:'أسبوعية',
+    no_data:'لا توجد بيانات',active_sch:'جدول نشط',inactive_sch:'موقوف',
+    lbl_activate:'تفعيل',lbl_deactivate:'إيقاف',lbl_trigger:'إنشاء نسخة الآن',
+    stat_total:'إجمالي الأدوية',stat_active:'جداول نشطة',stat_pending:'قوائم معلقة',stat_done:'مكتملة اليوم',
+    lbl_items:'عنصر',lbl_missing_items:'ناقص',lbl_progress:'التقدم',
+    area_ip:'العناية المركزة',area_opp:'العيادات الخارجية',
+    role_mmc:'مدير المخزن',role_aid:'مساعد المخزن',role_tech:'التقني',
+    lbl_assign_aid:'AID - مساعد المخزن',lbl_assign_tech:'TECH - التقني مباشرة',
+    sent_ok:'تم الإرسال بنجاح ✓'
+  },
+  en:{
+    dash_title:'Dashboard',dash_sub:'Overview of Material Management System',
+    snav_main:'MAIN',snav_ops:'OPERATIONS',snav_dash:'Dashboard',snav_chk:'Checklists',snav_sch:'Schedules',snav_rep:'Reports',snav_perf:'Performance',snav_workflow:'Workflow Monitor',snav_specialpdf:'Special Lists',snav_zero:'Zero / NIL',snav_med:'Medications',
+    lbl_logout:'Logout',logo_sub:'Material Management System',
+    lbl_recent:'Recent Activity',lbl_quick:'Quick Actions',
+    chk_title:'Checklists',chk_sub:'Your assigned checklists',
+    sch_title:'Schedules',sch_sub:'Manage recurring checklists',
+    rep_title:'Reports',rep_sub:'Completed inspection reports',
+    med_title:'Medications',med_sub:'All medications sorted alphabetically',
+    lbl_newsch:'New Schedule',lbl_export:'Export Excel',
+    lbl_fdate:'From Date',lbl_fdate2:'To Date',lbl_farea:'Area',lbl_ftype:'Type',lbl_clear:'Clear',
+    th_name:'Medication Name',th_oracle:'Oracle #',th_cat:'Category',th_area:'Area',
+    schm_title:'Create New Schedule',schm_lname:'List Name',schm_larea:'Area',schm_lfreq:'Frequency',schm_lassign:'First Assignee',schm_lmeds:'Select Medications',
+    schm_note:'A new checklist instance will be auto-generated per schedule',schm_cancel:'Cancel',schm_save:'Save Schedule',
+    lbl_selall:'Select All',lbl_clrall:'Clear All',
+    s_pending:'Pending',s_submitted:'Awaiting TECH',s_reviewed:'Awaiting MMC',s_completed:'Completed',
+    type_daily:'Daily',type_twice:'Twice/Week',type_weekly:'Weekly',
+    send_to_tech:'Send to TECH',send_to_mmc:'Send to MMC',
+    lbl_checked:'✓ Available',lbl_missing:'✗ Missing',lbl_nil:'NIL',lbl_req:'REQUESTED',
+    fchk_all:'All',fchk_pend:'Pending',fchk_sub:'Awaiting TECH',fchk_rev:'Awaiting MMC',
+    lbl_repdetail:'Report Details',
+    ll_sub:'Material Management System',ll_user:'Username',ll_pass:'Password',ll_btn:'Login',ll_err:'Invalid username or password',
+    schopt_daily:'Daily',schopt_twice:'Twice Weekly',schopt_weekly:'Weekly',
+    fopt_daily:'Daily',fopt_twice:'Twice Weekly',fopt_weekly:'Weekly',
+    no_data:'No data found',active_sch:'Active',inactive_sch:'Paused',
+    lbl_activate:'Activate',lbl_deactivate:'Pause',lbl_trigger:'Generate Instance Now',
+    stat_total:'Total Medications',stat_active:'Active Schedules',stat_pending:'Pending Lists',stat_done:'Done Today',
+    lbl_items:'items',lbl_missing_items:'missing',lbl_progress:'Progress',
+    area_ip:'Intensive Care',area_opp:'Outpatient',
+    role_mmc:'Inventory Manager',role_aid:'Store Assistant',role_tech:'Technician',
+    lbl_assign_aid:'AID - Store Assistant',lbl_assign_tech:'TECH - Direct',
+    sent_ok:'Sent Successfully ✓'
+  }
+};
+function T(k){return(TR[lang]||TR.en)[k]||k;}
+
+// ============ LOGIN ============
+function doLogin(){
+  const u=document.getElementById('login-username').value.trim();
+  const p=document.getElementById('login-password').value;
+  const acc=ACCOUNTS[u];
+  if(acc&&acc.password===p){
+    currentUser={username:u,role:acc.role,area:acc.area};
+    currentRole=acc.role; userArea=acc.area;
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('main-app').style.display='flex';
+    document.getElementById('login-error').style.display='none';
+    initApp();
+  } else {
+    const e=document.getElementById('login-error');
+    e.textContent=T('ll_err'); e.style.display='block';
+  }
+}
+document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('login-username').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-password').focus();});
+function doLogout(){
+  currentUser=null;
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('login-page').style.display='flex';
+  document.getElementById('login-username').value='';
+  document.getElementById('login-password').value='';
+}
+
+// ============ INIT ============
+function initApp(){
+  const badge=document.getElementById('role-badge');
+  badge.className='role-badge role-'+currentRole;
+  document.getElementById('role-name').textContent=currentUser.username;
+  // show sidebar items by role
+  document.getElementById('nav-schedules').style.display=currentRole==='mmc'?'flex':'none';
+  document.getElementById('nav-reports').style.display=currentRole==='mmc'?'flex':'none';
+  document.getElementById('nav-performance').style.display=currentRole==='mmc'?'flex':'none';
+  document.getElementById('nav-workflow').style.display=currentRole==='mmc'?'flex':'none';
+  document.getElementById('nav-zero').style.display=currentRole==='mmc'?'flex':'none';
+  document.getElementById('nav-specialpdf').style.display=(currentRole==='mmc'||(currentRole==='tech'&&userArea==='ip')||(currentRole==='aid'&&userArea==='ip'))?'flex':'none';
+  applyTrans();
+  renderMeds();
+  showPage('dashboard');
+}
+
+// ============ LANGUAGE ============
+function setLang(l){
+  lang=l;
+  document.body.dir=l==='ar'?'rtl':'ltr';
+  document.body.className=l==='ar'?'':'ltr';
+  document.documentElement.lang=l;
+  ['ar','en'].forEach(x=>{
+    document.getElementById('lbtn-'+x).classList.toggle('active',x===l);
+    const b=document.getElementById('btn-'+x); if(b) b.classList.toggle('active',x===l);
+  });
+  document.getElementById('ll-sub').textContent=T('ll_sub');
+  document.getElementById('ll-user').textContent=T('ll_user');
+  document.getElementById('ll-pass').textContent=T('ll_pass');
+  document.getElementById('ll-btn').textContent=T('ll_btn');
+  if(currentUser) applyTrans();
+}
+
+function applyTrans(){
+  const map={
+    'logo-sub':'logo_sub','lbl-logout':'lbl_logout',
+    'snav-main':'snav_main','snav-ops':'snav_ops','snav-dash':'snav_dash','snav-chk':'snav_chk','snav-sch':'snav_sch','snav-rep':'snav_rep','snav-perf':'snav_perf','snav-workflow':'snav_workflow','snav-specialpdf':'snav_specialpdf','snav-zero':'snav_zero','snav-med':'snav_med',
+    'dash-title':'dash_title','dash-sub':'dash_sub','lbl-recent':'lbl_recent','lbl-quick':'lbl_quick',
+    'chk-title':'chk_title','chk-sub':'chk_sub',
+    'sch-title':'sch_title','sch-sub':'sch_sub','lbl-newsch':'lbl_newsch',
+    'rep-title':'rep_title','rep-sub':'rep_sub','lbl-export':'lbl_export',
+    'lbl-fdate':'lbl_fdate','lbl-fdate2':'lbl_fdate2','lbl-farea':'lbl_farea','lbl-ftype':'lbl_ftype','lbl-clear':'lbl_clear',
+    'med-title':'med_title','med-sub':'med_sub',
+    'th-name':'th_name','th-oracle':'th_oracle','th-cat':'th_cat','th-area':'th_area',
+    'schm-title':'schm_title','schm-lname':'schm_lname','schm-larea':'schm_larea','schm-lfreq':'schm_lfreq','schm-lassign':'schm_lassign','schm-lmeds':'schm_lmeds',
+    'schm-note':'schm_note','schm-cancel':'schm_cancel','schm-save':'schm_save',
+    'lbl-selall':'lbl_selall','lbl-clrall':'lbl_clrall',
+    'lbl-repdetail':'lbl_repdetail',
+    'fchk-pending':'fchk_pend','fchk-submitted':'fchk_sub','fchk-reviewed':'fchk_rev',
+    'fopt-daily':'fopt_daily','fopt-twice':'fopt_twice','fopt-weekly':'fopt_weekly',
+    'schopt-daily':'schopt_daily','schopt-twice':'schopt_twice','schopt-weekly':'schopt_weekly'
+  };
+  Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el)el.textContent=T(k);});
+  renderCurrentPage();
+}
+
+// ============ HELPERS ============
+function getMed(id){return medications.find(m=>m.id===id);}
+function getStatusClass(s){return{pending:'s-pending',submitted:'s-submitted',reviewed:'s-reviewed',completed:'s-completed'}[s]||'s-pending';}
+function getStatusLabel(s){return{pending:T('s_pending'),submitted:T('s_submitted'),reviewed:T('s_reviewed'),completed:T('s_completed')}[s]||s;}
+function getTypeLabel(f){return{daily:T('type_daily'),twice_weekly:T('type_twice'),weekly:T('type_weekly')}[f]||f;}
+function getTypeClass(f){return{daily:'type-daily',twice_weekly:'type-twice',weekly:'type-weekly'}[f]||'type-daily';}
+function today(){return new Date().toISOString().slice(0,10);}
+
+// ============ NAVIGATION ============
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  const pg=document.getElementById('page-'+p);
+  if(pg) pg.classList.add('active');
+  const nav=document.getElementById('nav-'+p);
+  if(nav) nav.classList.add('active');
+  currentPage=p;
+  renderCurrentPage();
+}
+function renderCurrentPage(){
+  if(currentPage==='dashboard') renderDashboard();
+  else if(currentPage==='checklists') renderChecklists();
+  else if(currentPage==='schedules') renderSchedules();
+  else if(currentPage==='reports') renderReports();
+  else if(currentPage==='performance') renderPerformance();
+  else if(currentPage==='workflow') renderWorkflowMonitor();
+  else if(currentPage==='specialpdf') renderSpecialPdf();
+  else if(currentPage==='zero') renderZeroDashboard();
+  else if(currentPage==='medications') renderMeds();
+}
+
+// ============ DASHBOARD ============
+function renderDashboard(){
+  const todayInstances=instances.filter(i=>i.date===today());
+  const pendingCount=instances.filter(i=>(userArea==='all'||i.area===userArea)&&(i.status==='pending'||i.status==='submitted')).length;
+  const doneToday=instances.filter(i=>i.date===today()&&i.status==='completed').length;
+  const statsEl=document.getElementById('dash-stats');
+  if(currentRole==='mmc'){
+    statsEl.innerHTML=`
+      <div class="stat-card"><div class="stat-num">${medications.length}</div><div class="stat-lbl">${T('stat_total')}</div></div>
+      <div class="stat-card"><div class="stat-num">${schedules.filter(s=>s.active).length}</div><div class="stat-lbl">${T('stat_active')}</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#E24B4A">${pendingCount}</div><div class="stat-lbl">${T('stat_pending')}</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#1D9E75">${doneToday}</div><div class="stat-lbl">${T('stat_done')}</div></div>`;
+  } else {
+    const myInstances=getMyInstances();
+    const myPending=myInstances.filter(i=>i.status==='pending').length;
+    statsEl.innerHTML=`
+      <div class="stat-card"><div class="stat-num">${myInstances.length}</div><div class="stat-lbl">${T('snav_chk')}</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#E24B4A">${myPending}</div><div class="stat-lbl">${T('stat_pending')}</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#1D9E75">${myInstances.filter(i=>i.status==='completed').length}</div><div class="stat-lbl">${T('stat_done')}</div></div>`;
+  }
+  // recent
+  let recent=[...instances].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
+  if(userArea!=='all') recent=recent.filter(i=>i.area===userArea);
+  document.getElementById('dash-recent').innerHTML=recent.map(i=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border-light)">
+      <div><div style="font-size:13px;font-weight:500">${i.name}</div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">${i.date} · <span class="area-tag ${i.area==='ip'?'area-ip':'area-opp'}" style="font-size:10px">${i.area.toUpperCase()}</span></div></div>
+      <span class="status-pill ${getStatusClass(i.status)}">${getStatusLabel(i.status)}</span>
+    </div>`).join('');
+  // quick
+  const qEl=document.getElementById('dash-quick');
+  if(currentRole==='mmc'){
+    qEl.innerHTML=`
+      <button class="btn btn-primary" onclick="showPage('schedules')"><i class="ti ti-calendar-repeat"></i>${T('snav_sch')}</button>
+      <button class="btn" onclick="showPage('reports')"><i class="ti ti-file-spreadsheet"></i>${T('snav_rep')}</button>
+      <button class="btn" onclick="showPage('performance')"><i class="ti ti-chart-bar"></i>${T('snav_perf')}</button>
+      <button class="btn" onclick="showPage('workflow')"><i class="ti ti-route"></i>Workflow Monitor</button>
+      <button class="btn" onclick="showPage('zero')"><i class="ti ti-alert-triangle"></i>Zero / NIL</button>
+      <button class="btn" onclick="showPage('checklists')"><i class="ti ti-clipboard-check"></i>${T('snav_chk')}</button>`;
+  } else {
+    qEl.innerHTML=`<button class="btn btn-primary" onclick="showPage('checklists')"><i class="ti ti-clipboard-check"></i>${T('snav_chk')}</button>${userArea==='ip'?`<button class="btn" onclick="showPage('specialpdf')"><i class="ti ti-file-type-pdf"></i>القوائم الخاصة</button>`:''}`;
+  }
+  updateBadges();
+}
+
+function updateBadges(){
+  const myI=getMyInstances().filter(i=>i.status==='pending'||(currentRole==='tech'&&i.status==='submitted'));
+  document.getElementById('badge-chk').textContent=myI.length;
+  const repBadge=document.getElementById('badge-rep');
+  if(repBadge) repBadge.textContent=instances.filter(i=>i.status==='reviewed').length;
+  const spBadge=document.getElementById('badge-special');
+  if(spBadge && typeof specialLists!=='undefined') spBadge.textContent=getMySpecialLists().filter(l=>l.stage!=='mmc_received').length;
+}
+
+// ============ GET MY INSTANCES ============
+function getMyInstances(){
+  if(currentRole==='mmc') return instances.filter(i=>userArea==='all'||i.area===userArea);
+  if(currentRole==='aid') return instances.filter(i=>i.area===userArea&&i.assignFirst==='aid'&&(i.status==='pending'||i.status==='submitted'||i.status==='completed'));
+  if(currentRole==='tech') return instances.filter(i=>i.area===userArea&&(i.status==='submitted'||i.status==='reviewed'||i.status==='completed'));
+  return [];
+}
+
+// ============ CHECKLISTS ============
+function setChkFilter(f,btn){
+  chkFilter=f;
+  document.querySelectorAll('#chk-filters .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChecklists();
+}
+
+function renderChecklists(){
+  const container=document.getElementById('chk-container');
+  let list=getMyInstances();
+  if(chkFilter!=='all') list=list.filter(i=>i.status===chkFilter);
+  if(!list.length){container.innerHTML=`<div class="empty-state"><i class="ti ti-clipboard"></i><div>${T('no_data')}</div></div>`;return;}
+  container.innerHTML=list.map(inst=>`
+    <div class="card" style="margin-bottom:.75rem">
+      <div class="card-header">
+        <div>
+          <div style="font-size:14px;font-weight:600">${inst.name}</div>
+          <div class="tag-row" style="margin-top:6px">
+            <span class="area-tag ${inst.area==='ip'?'area-ip':'area-opp'}">${inst.area.toUpperCase()}</span>
+            <span class="type-tag ${getTypeClass(inst.freq)}">${getTypeLabel(inst.freq)}</span>
+            <span style="font-size:11px;color:var(--text-tertiary)">${inst.date}</span>
+          </div>
+        </div>
+        <span class="status-pill ${getStatusClass(inst.status)}">${getStatusLabel(inst.status)}</span>
+      </div>
+      ${renderInstBody(inst)}
+    </div>`).join('');
+}
+
+function renderInstBody(inst){
+  const meds=inst.items.map(id=>getMed(id)).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name));
+
+  // AID view: checklist
+  if(currentRole==='aid'&&(inst.status==='pending'||inst.status==='submitted')){
+    const progress=inst.checkedItems.length;
+    const total=inst.items.length;
+    const pct=Math.round(progress/total*100);
+    return `
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-secondary);margin-bottom:4px">
+          <span>${T('lbl_progress')}</span><span>${progress}/${total} (${pct}%)</span>
+        </div>
+        <div style="height:4px;background:var(--border-light);border-radius:4px">
+          <div style="height:4px;background:var(--blue-600);border-radius:4px;width:${pct}%;transition:width .3s"></div>
+        </div>
+      </div>
+      <table class="med-table">
+        <thead><tr><th style="width:40px">#</th><th>${T('th_name')}</th><th>${T('th_oracle')}</th><th style="text-align:center;width:60px">✓</th></tr></thead>
+        <tbody>${meds.map(m=>`<tr>
+          <td style="color:var(--text-tertiary);font-size:11px">${m.id}</td>
+          <td>${m.name}</td>
+          <td style="font-family:monospace;color:var(--text-secondary);font-size:12px">${m.oracle}</td>
+          <td><div style="display:flex;justify-content:center">
+            <div class="check-box ${inst.checkedItems.includes(m.id)?'checked':''}" onclick="toggleCheck('${inst.id}',${m.id})">
+              ${inst.checkedItems.includes(m.id)?'<i class="ti ti-check"></i>':''}
+            </div>
+          </div></td>
+        </tr>`).join('')}</tbody>
+      </table>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem">
+        <span style="font-size:12px;color:var(--text-secondary)">${inst.items.length-inst.checkedItems.length} ${T('lbl_missing_items')}</span>
+        ${inst.status==='pending'?`<button class="btn btn-primary btn-sm" onclick="aidSend('${inst.id}')"><i class="ti ti-send"></i>${T('send_to_tech')}</button>`:
+        `<span class="sent-indicator"><i class="ti ti-check"></i>${T('sent_ok')}</span>`}
+      </div>`;
+  }
+
+  // TECH view: only missing items with NIL/REQUESTED
+  if(currentRole==='tech'&&inst.status==='submitted'){
+    const missing=meds.filter(m=>!inst.checkedItems.includes(m.id));
+    if(!missing.length) return `<div class="info-box"><i class="ti ti-info-circle"></i>لا توجد أدوية ناقصة</div>`;
+    return `
+      <div class="info-box" style="margin-bottom:10px"><i class="ti ti-alert-circle"></i>${missing.length} ${T('lbl_missing_items')}</div>
+      <table class="med-table">
+        <thead><tr><th>${T('th_name')}</th><th>${T('th_oracle')}</th><th style="min-width:140px">الحالة / Status</th></tr></thead>
+        <tbody>${missing.map(m=>`<tr>
+          <td>${m.name}</td>
+          <td style="font-family:monospace;color:var(--text-secondary);font-size:12px">${m.oracle}</td>
+          <td><select class="tech-select ${inst.techNotes[m.id]||''}" onchange="setNote('${inst.id}',${m.id},this.value,this)">
+            <option value="">— اختر —</option>
+            <option value="nil" ${inst.techNotes[m.id]==='nil'?'selected':''}>NIL</option>
+            <option value="requested" ${inst.techNotes[m.id]==='requested'?'selected':''}>REQUESTED</option>
+          </select></td>
+        </tr>`).join('')}</tbody>
+      </table>
+      <div style="display:flex;justify-content:flex-end;margin-top:1rem">
+        <button class="btn btn-success btn-sm" onclick="techSend('${inst.id}')"><i class="ti ti-send"></i>${T('send_to_mmc')}</button>
+      </div>`;
+  }
+
+  // MMC or completed: full view
+  return `
+    <table class="med-table">
+      <thead><tr><th>${T('th_name')}</th><th>${T('th_oracle')}</th><th>الحالة</th></tr></thead>
+      <tbody>${meds.map(m=>`<tr>
+        <td>${m.name}</td>
+        <td style="font-family:monospace;color:var(--text-secondary);font-size:12px">${m.oracle}</td>
+        <td>${inst.techNotes[m.id]==='nil'?`<span class="nil-tag">NIL</span>`:
+            inst.techNotes[m.id]==='requested'?`<span class="req-tag">REQUESTED</span>`:
+            inst.checkedItems.includes(m.id)?`<span style="color:#1D9E75;font-size:12px">✓ موجود</span>`:
+            `<span style="color:var(--text-tertiary);font-size:12px">—</span>`}
+        </td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function toggleCheck(instId,medId){
+  const inst=instances.find(i=>i.id===instId); if(!inst) return;
+  if(inst.checkedItems.includes(medId)) inst.checkedItems=inst.checkedItems.filter(x=>x!==medId);
+  else inst.checkedItems.push(medId);
+  renderChecklists();
+}
+function setNote(instId,medId,val,sel){
+  const inst=instances.find(i=>i.id===instId); if(!inst) return;
+  inst.techNotes[medId]=val; sel.className='tech-select '+val;
+}
+function aidSend(instId){
+  const inst=instances.find(i=>i.id===instId); if(!inst) return;
+  inst.status='submitted'; renderChecklists(); updateBadges();
+}
+function techSend(instId){
+  const inst=instances.find(i=>i.id===instId); if(!inst) return;
+  // check all missing items have been noted
+  const meds=inst.items.map(id=>getMed(id)).filter(Boolean);
+  const missing=meds.filter(m=>!inst.checkedItems.includes(m.id));
+  const unnoted=missing.filter(m=>!inst.techNotes[m.id]);
+  if(unnoted.length>0){alert(`يرجى تحديد الحالة لجميع الأدوية الناقصة (${unnoted.length} متبقية)`);return;}
+  inst.status='reviewed'; renderChecklists(); updateBadges();
+}
+
+// ============ SCHEDULES ============
+function renderSchedules(){
+  const container=document.getElementById('sch-container');
+  if(!schedules.length){container.innerHTML=`<div class="empty-state"><i class="ti ti-calendar"></i><div>${T('no_data')}</div></div>`;return;}
+  container.innerHTML=schedules.map(s=>{
+    const relatedInst=instances.filter(i=>i.schedId===s.id);
+    const lastInst=relatedInst.sort((a,b)=>b.date.localeCompare(a.date))[0];
+    return `<div class="card" style="margin-bottom:.75rem">
+      <div class="card-header">
+        <div>
+          <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px">
+            ${s.name}
+            <span style="font-size:10px;padding:2px 8px;border-radius:20px;background:${s.active?'var(--teal-50)':'var(--red-50)'};color:${s.active?'var(--teal-800)':'var(--red-800)'}">
+              ${s.active?T('active_sch'):T('inactive_sch')}
+            </span>
+          </div>
+          <div class="tag-row" style="margin-top:6px">
+            <span class="area-tag ${s.area==='ip'?'area-ip':'area-opp'}">${s.area.toUpperCase()}</span>
+            <span class="type-tag ${getTypeClass(s.freq)}">${getTypeLabel(s.freq)}</span>
+            <span class="sched-tag">${s.items.length} ${T('lbl_items')}</span>
+            <span class="sched-tag">${T('schm_lassign')}: ${s.assignFirst.toUpperCase()}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-xs" onclick="toggleSchedule('${s.id}')">${s.active?T('lbl_deactivate'):T('lbl_activate')}</button>
+            <button class="btn btn-xs btn-primary" onclick="triggerInstance('${s.id}')"><i class="ti ti-bolt"></i>${T('lbl_trigger')}</button>
+          </div>
+          ${lastInst?`<span style="font-size:11px;color:var(--text-secondary)">آخر تشغيل: ${lastInst.date}</span>`:''}
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-secondary)">${T('th_name')}: ${s.items.map(id=>getMed(id)?.name).filter(Boolean).slice(0,4).join(' · ')}${s.items.length>4?` +${s.items.length-4}`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSchedule(sid){
+  const s=schedules.find(x=>x.id===sid); if(s) s.active=!s.active; renderSchedules();
+}
+function triggerInstance(sid){
+  const s=schedules.find(x=>x.id===sid); if(!s) return;
+  const newId='CKL'+String(instances.length+1).padStart(3,'0');
+  instances.unshift({id:newId,schedId:s.id,area:s.area,freq:s.freq,assignFirst:s.assignFirst,items:[...s.items],checkedItems:[],techNotes:{},status:'pending',date:today(),name:s.name});
+  updateBadges();
+  alert(`✓ تم إنشاء نسخة جديدة: ${s.name}`);
+  renderSchedules();
+}
+
+// ============ SCHEDULE MODAL ============
+function openScheduleModal(){
+  const list=document.getElementById('modal-med-list');
+  list.innerHTML=[...medications].sort((a,b)=>a.name.localeCompare(b.name)).map(m=>`
+    <div class="med-select-item">
+      <input type="checkbox" id="mchk-${m.id}" value="${m.id}">
+      <label for="mchk-${m.id}" style="cursor:pointer;flex:1">${m.name}</label>
+      <span style="font-family:monospace;font-size:11px;color:var(--text-tertiary)">${m.oracle}</span>
+    </div>`).join('');
+  document.getElementById('sch-name').value='';
+  document.getElementById('sch-modal').classList.add('open');
+}
+function closeSchModal(){document.getElementById('sch-modal').classList.remove('open');}
+document.getElementById('sch-modal').addEventListener('click',function(e){if(e.target===this)closeSchModal();});
+function selectAllMeds(){document.querySelectorAll('#modal-med-list input').forEach(c=>c.checked=true);}
+function clearAllMeds(){document.querySelectorAll('#modal-med-list input').forEach(c=>c.checked=false);}
+function filterMedList(){
+  const q=document.getElementById('med-search').value.toLowerCase();
+  document.querySelectorAll('.med-select-item').forEach(el=>{
+    el.style.display=el.textContent.toLowerCase().includes(q)?'flex':'none';
+  });
+}
+function saveSchedule(){
+  const name=document.getElementById('sch-name').value.trim();
+  const area=document.getElementById('sch-area').value;
+  const freq=document.getElementById('sch-freq').value;
+  const assign=document.getElementById('sch-assign').value;
+  const items=[...document.querySelectorAll('#modal-med-list input:checked')].map(i=>parseInt(i.value));
+  if(!name){alert('أدخل اسم القائمة');return;}
+  if(!items.length){alert('اختر دواءً واحداً على الأقل');return;}
+  const newId='SCH'+String(schedules.length+1).padStart(3,'0');
+  schedules.push({id:newId,name,area,freq,assignFirst:assign,items,active:true,createdAt:today()});
+  closeSchModal(); renderSchedules(); updateBadges();
+}
+
+// ============ REPORTS ============
+function renderReports(){
+  const container=document.getElementById('rep-container');
+  const dateFrom=document.getElementById('rep-date-from').value;
+  const dateTo=document.getElementById('rep-date-to').value;
+  const areaF=document.getElementById('rep-filter-area').value;
+  const typeF=document.getElementById('rep-filter-type').value;
+  let list=instances.filter(i=>i.status==='reviewed'||i.status==='completed');
+  if(dateFrom) list=list.filter(i=>i.date>=dateFrom);
+  if(dateTo) list=list.filter(i=>i.date<=dateTo);
+  if(areaF!=='all') list=list.filter(i=>i.area===areaF);
+  if(typeF!=='all') list=list.filter(i=>i.freq===typeF);
+  list.sort((a,b)=>b.date.localeCompare(a.date));
+  if(!list.length){container.innerHTML=`<div class="empty-state"><i class="ti ti-file-x"></i><div>${T('no_data')}</div></div>`;return;}
+  // summary
+  const nilTotal=list.reduce((acc,i)=>acc+Object.values(i.techNotes).filter(v=>v==='nil').length,0);
+  const reqTotal=list.reduce((acc,i)=>acc+Object.values(i.techNotes).filter(v=>v==='requested').length,0);
+  container.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1rem">
+      <div class="stat-card"><div class="stat-num">${list.length}</div><div class="stat-lbl">تقارير</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#E24B4A">${nilTotal}</div><div class="stat-lbl">NIL</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#1D9E75">${reqTotal}</div><div class="stat-lbl">REQUESTED</div></div>
+    </div>`+
+  list.map(inst=>{
+    const missing=inst.items.filter(id=>!inst.checkedItems.includes(id));
+    return `<div class="report-row" onclick="showRepDetail('${inst.id}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:13px;font-weight:600">${inst.name}</div>
+          <div class="tag-row" style="margin-top:5px">
+            <span class="area-tag ${inst.area==='ip'?'area-ip':'area-opp'}">${inst.area.toUpperCase()}</span>
+            <span class="type-tag ${getTypeClass(inst.freq)}">${getTypeLabel(inst.freq)}</span>
+            <span style="font-size:11px;color:var(--text-tertiary)">${inst.date}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${missing.length?`<span class="nil-tag">${missing.length} ناقص</span>`:''}
+          ${Object.values(inst.techNotes).filter(v=>v==='requested').length?`<span class="req-tag">${Object.values(inst.techNotes).filter(v=>v==='requested').length} REQUESTED</span>`:''}
+          <span class="status-pill ${getStatusClass(inst.status)}">${getStatusLabel(inst.status)}</span>
+          <i class="ti ti-chevron-${lang==='ar'?'left':'right'}" style="color:var(--text-tertiary)"></i>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showRepDetail(instId){
+  const inst=instances.find(i=>i.id===instId); if(!inst) return;
+  const meds=inst.items.map(id=>getMed(id)).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('rep-detail-body').innerHTML=`
+    <div class="tag-row" style="margin-bottom:1rem">
+      <span class="area-tag ${inst.area==='ip'?'area-ip':'area-opp'}">${inst.area.toUpperCase()}</span>
+      <span class="type-tag ${getTypeClass(inst.freq)}">${getTypeLabel(inst.freq)}</span>
+      <span class="status-pill ${getStatusClass(inst.status)}">${getStatusLabel(inst.status)}</span>
+      <span style="font-size:11px;color:var(--text-tertiary)">${inst.date}</span>
+    </div>
+    <table class="med-table">
+      <thead><tr><th>${T('th_name')}</th><th>${T('th_oracle')}</th><th>نتيجة AID</th><th>نتيجة TECH</th></tr></thead>
+      <tbody>${meds.map(m=>`<tr>
+        <td>${m.name}</td>
+        <td style="font-family:monospace;color:var(--text-secondary);font-size:12px">${m.oracle}</td>
+        <td>${inst.checkedItems.includes(m.id)?`<span style="color:#1D9E75;font-size:12px">✓ موجود</span>`:`<span style="color:#E24B4A;font-size:12px">✗ ناقص</span>`}</td>
+        <td>${inst.techNotes[m.id]==='nil'?`<span class="nil-tag">NIL</span>`:inst.techNotes[m.id]==='requested'?`<span class="req-tag">REQUESTED</span>`:`<span style="color:var(--text-tertiary)">—</span>`}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  document.getElementById('rep-detail').style.display='block';
+  document.getElementById('rep-detail').scrollIntoView({behavior:'smooth'});
+}
+
+function clearRepFilters(){
+  document.getElementById('rep-date-from').value='';
+  document.getElementById('rep-date-to').value='';
+  document.getElementById('rep-filter-area').value='all';
+  document.getElementById('rep-filter-type').value='all';
+  renderReports();
+}
+
+// ============ EXPORT EXCEL ============
+function exportExcel(){
+  const dateFrom=document.getElementById('rep-date-from').value;
+  const dateTo=document.getElementById('rep-date-to').value;
+  const areaF=document.getElementById('rep-filter-area').value;
+  const typeF=document.getElementById('rep-filter-type').value;
+  let list=instances.filter(i=>i.status==='reviewed'||i.status==='completed');
+  if(dateFrom) list=list.filter(i=>i.date>=dateFrom);
+  if(dateTo) list=list.filter(i=>i.date<=dateTo);
+  if(areaF!=='all') list=list.filter(i=>i.area===areaF);
+  if(typeF!=='all') list=list.filter(i=>i.freq===typeF);
+  if(!list.length){alert('لا توجد بيانات للتصدير');return;}
+  let csv='\uFEFF'; // BOM for Arabic
+  csv+='التاريخ,اسم القائمة,المنطقة,النوع,اسم الدواء,Oracle #,نتيجة AID,نتيجة TECH\n';
+  list.forEach(inst=>{
+    const meds=inst.items.map(id=>getMed(id)).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name));
+    meds.forEach(m=>{
+      const aidRes=inst.checkedItems.includes(m.id)?'موجود':'ناقص';
+      const techRes=inst.techNotes[m.id]==='nil'?'NIL':inst.techNotes[m.id]==='requested'?'REQUESTED':'—';
+      csv+=`${inst.date},"${inst.name}",${inst.area.toUpperCase()},${getTypeLabel(inst.freq)},"${m.name}",${m.oracle},${aidRes},${techRes}\n`;
+    });
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`MM_Pharmacy_Report_${today()}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============ MEDICATIONS ============
+function renderMeds(){
+  const tbody=document.getElementById('med-body');
+  tbody.innerHTML='';
+  [...medications].sort((a,b)=>a.name.localeCompare(b.name)).forEach(m=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${m.name}</td><td style="font-family:monospace;color:var(--text-secondary)">${m.oracle}</td><td style="font-size:12px;color:var(--text-secondary)">${m.cat}</td><td><span class="area-tag ${m.area==='ip'?'area-ip':'area-opp'}">${m.area.toUpperCase()}</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+
+
+// ============ ENHANCEMENTS: IMPORT, EDIT/DELETE, TIMING, PERFORMANCE ============
+let editingScheduleId = null;
+let importedMedicationIds = [];
+let exemptions = [];
+let specialLists = [];
+
+function loadLocalData(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('mmpharmacy_v2') || '{}');
+    if(saved.medications){ medications.splice(0, medications.length, ...saved.medications); }
+    if(saved.schedules){ schedules.splice(0, schedules.length, ...saved.schedules); }
+    if(saved.instances){ instances.splice(0, instances.length, ...saved.instances); }
+    if(saved.exemptions){ exemptions = saved.exemptions; }
+    if(saved.specialLists){ specialLists = saved.specialLists; }
+  }catch(e){ console.warn('Local data load failed', e); }
+}
+function saveLocalData(){
+  localStorage.setItem('mmpharmacy_v2', JSON.stringify({medications, schedules, instances, exemptions, specialLists}));
+}
+function nowISO(){ return new Date().toISOString(); }
+function minsToMs(m){ return Number(m||0)*60*1000; }
+function userFor(area, role){ return `${String(area||'').toUpperCase()}-${String(role||'').toUpperCase()}`; }
+function isExempt(user, iso){
+  const t = new Date(iso || nowISO()).getTime();
+  return exemptions.find(e=>e.user===user && new Date(e.from).getTime()<=t && t<=new Date(e.to).getTime());
+}
+function performanceLabel(startISO, submitISO, durationMin, graceMin, user){
+  if(!startISO) return {label:'Not Assigned',cls:'s-pending',score:0};
+  const ex = isExempt(user, submitISO || nowISO());
+  if(ex) return {label:'Excused',cls:'s-reviewed',score:null};
+  if(!submitISO) return {label:'Not Submitted',cls:'s-pending',score:0};
+  const diff = new Date(submitISO).getTime() - new Date(startISO).getTime();
+  const due = minsToMs(durationMin);
+  const grace = minsToMs(graceMin);
+  if(diff < due) return {label:'Early',cls:'s-completed',score:100};
+  if(diff === due) return {label:'On Time',cls:'s-completed',score:90};
+  if(diff <= due + grace) return {label:'Slight Late',cls:'s-pending',score:70};
+  return {label:'Late',cls:'s-submitted',score:50};
+}
+function addMinutesISO(startISO, minutes){ return new Date(new Date(startISO).getTime()+minsToMs(minutes)).toLocaleString('ar-SA'); }
+function getScheduleTiming(s){
+  return {
+    releaseTime: s.releaseTime || '08:00',
+    firstDurationMin: Number(s.firstDurationMin || 120),
+    secondAssignee: s.secondAssignee || (s.assignFirst==='aid' ? 'tech' : 'none'),
+    secondDurationMin: Number(s.secondDurationMin || 60),
+    graceMin: Number(s.graceMin || 15)
+  };
+}
+function createInstanceFromSchedule(s){
+  const t=getScheduleTiming(s);
+  const user = userFor(s.area, s.assignFirst);
+  if(isExempt(user, nowISO())?.mode==='stop_assignment') return null;
+  const newId='CKL'+String(instances.length+1).padStart(3,'0');
+  const firstIsTech = s.assignFirst==='tech';
+  const inst={id:newId,schedId:s.id,area:s.area,freq:s.freq,assignFirst:s.assignFirst,secondAssignee:t.secondAssignee,items:[...s.items],checkedItems:[],techNotes:{},status:firstIsTech?'submitted':'pending',date:today(),name:s.name,createdAtISO:nowISO(),releaseTime:t.releaseTime,firstDurationMin:t.firstDurationMin,secondDurationMin:t.secondDurationMin,graceMin:t.graceMin};
+  if(firstIsTech) inst.techAssignedAtISO=nowISO(); else inst.aidAssignedAtISO=nowISO();
+  instances.unshift(inst); saveLocalData(); return inst;
+}
+function autoGenerateDueSchedules(){
+  const now = new Date(); const hhmm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  schedules.filter(s=>s.active!==false).forEach(s=>{
+    const rel=(s.releaseTime||'08:00');
+    const exists=instances.some(i=>i.schedId===s.id && i.date===today());
+    if(!exists && hhmm>=rel) createInstanceFromSchedule(s);
+  });
+}
+
+// Override initApp to load/save and auto-generate due lists
+const _oldInitApp = initApp;
+initApp = function(){ loadLocalData(); autoGenerateDueSchedules(); _oldInitApp(); };
+
+// Override AID/TECH submission to record actual completion times
+const _oldAidSend = aidSend;
+aidSend = function(instId){
+  const inst=instances.find(i=>i.id===instId); if(!inst) return;
+  inst.aidSubmittedAtISO=nowISO();
+  const t=getScheduleTiming(schedules.find(s=>s.id===inst.schedId)||{});
+  if((inst.secondAssignee||t.secondAssignee)==='tech'){
+    inst.status='submitted'; inst.techAssignedAtISO=nowISO();
+  }else inst.status='reviewed';
+  saveLocalData(); renderChecklists(); updateBadges();
+};
+const _oldTechSend = techSend;
+techSend = function(instId){
+  const inst=instances.find(i=>i.id===instId); if(!inst) return;
+  const meds=inst.items.map(id=>getMed(id)).filter(Boolean);
+  const missing=meds.filter(m=>!inst.checkedItems.includes(m.id));
+  const unnoted=missing.filter(m=>!inst.techNotes[m.id]);
+  if(unnoted.length>0){alert(`يرجى تحديد الحالة لجميع الأدوية الناقصة (${unnoted.length} متبقية)`);return;}
+  inst.techSubmittedAtISO=nowISO(); inst.status='reviewed';
+  saveLocalData(); renderChecklists(); updateBadges();
+};
+
+// Override schedule screen
+renderSchedules = function(){
+  const container=document.getElementById('sch-container');
+  if(!schedules.length){container.innerHTML=`<div class="empty-state"><i class="ti ti-calendar"></i><div>${T('no_data')}</div></div>`;return;}
+  container.innerHTML=schedules.map(s=>{
+    const t=getScheduleTiming(s);
+    const relatedInst=instances.filter(i=>i.schedId===s.id);
+    const lastInst=relatedInst.sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+    return `<div class="card" style="margin-bottom:.75rem">
+      <div class="card-header">
+        <div>
+          <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px">${s.name}
+            <span style="font-size:10px;padding:2px 8px;border-radius:20px;background:${s.active!==false?'var(--teal-50)':'var(--red-50)'};color:${s.active!==false?'var(--teal-800)':'var(--red-800)'}">${s.active!==false?T('active_sch'):T('inactive_sch')}</span>
+          </div>
+          <div class="tag-row" style="margin-top:6px">
+            <span class="area-tag ${s.area==='ip'?'area-ip':'area-opp'}">${s.area.toUpperCase()}</span>
+            <span class="type-tag ${getTypeClass(s.freq)}">${getTypeLabel(s.freq)}</span>
+            <span class="sched-tag">${s.items.length} ${T('lbl_items')}</span>
+            <span class="sched-tag">Release: ${t.releaseTime}</span>
+            <span class="sched-tag">${s.assignFirst.toUpperCase()}: ${t.firstDurationMin}m</span>
+            ${t.secondAssignee!=='none'?`<span class="sched-tag">TECH: ${t.secondDurationMin}m</span>`:''}
+            <span class="sched-tag">Grace: ${t.graceMin}m</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+            <button class="btn btn-xs" onclick="openScheduleModal('${s.id}')"><i class="ti ti-edit"></i>Edit</button>
+            <button class="btn btn-xs btn-danger" onclick="deleteSchedule('${s.id}')"><i class="ti ti-trash"></i>Delete</button>
+            <button class="btn btn-xs" onclick="toggleSchedule('${s.id}')">${s.active!==false?T('lbl_deactivate'):T('lbl_activate')}</button>
+            <button class="btn btn-xs btn-primary" onclick="triggerInstance('${s.id}')"><i class="ti ti-bolt"></i>${T('lbl_trigger')}</button>
+          </div>
+          ${lastInst?`<span style="font-size:11px;color:var(--text-secondary)">آخر تشغيل: ${lastInst.date}</span>`:''}
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-secondary)">${T('th_name')}: ${s.items.map(id=>getMed(id)?.name).filter(Boolean).slice(0,5).join(' · ')}${s.items.length>5?` +${s.items.length-5}`:''}</div>
+    </div>`;
+  }).join('');
+};
+triggerInstance = function(sid){ const s=schedules.find(x=>x.id===sid); if(!s) return; const inst=createInstanceFromSchedule(s); if(inst) alert(`✓ تم إنشاء نسخة جديدة: ${s.name}`); else alert('الموظف معفى حالياً، لم يتم إصدار القائمة'); renderSchedules(); updateBadges(); };
+toggleSchedule = function(sid){ const s=schedules.find(x=>x.id===sid); if(s) s.active=!(s.active!==false); saveLocalData(); renderSchedules(); };
+function deleteSchedule(sid){
+  const s=schedules.find(x=>x.id===sid); if(!s) return;
+  const also=confirm('حذف القائمة مع كل القوائم/التقارير الناتجة عنها؟\nOK = حذف الكل\nCancel = حذف الجدول فقط والاحتفاظ بالتقارير');
+  schedules.splice(schedules.indexOf(s),1);
+  if(also){ for(let i=instances.length-1;i>=0;i--) if(instances[i].schedId===sid) instances.splice(i,1); }
+  saveLocalData(); renderSchedules(); updateBadges();
+}
+
+openScheduleModal = function(sid=null){
+  editingScheduleId=sid; importedMedicationIds=[];
+  const list=document.getElementById('modal-med-list');
+  list.innerHTML=[...medications].sort((a,b)=>a.name.localeCompare(b.name)).map(m=>`
+    <div class="med-select-item"><input type="checkbox" id="mchk-${m.id}" value="${m.id}"><label for="mchk-${m.id}" style="cursor:pointer;flex:1">${m.name}</label><span style="font-family:monospace;font-size:11px;color:var(--text-tertiary)">${m.oracle||''}</span></div>`).join('');
+  document.getElementById('sch-modal').classList.add('open');
+  document.getElementById('import-preview').innerHTML='';
+  document.getElementById('import-file').value='';
+  const s=schedules.find(x=>x.id===sid);
+  if(s){
+    const t=getScheduleTiming(s);
+    document.getElementById('sch-name').value=s.name;
+    document.getElementById('sch-area').value=s.area;
+    document.getElementById('sch-freq').value=s.freq;
+    document.getElementById('sch-assign').value=s.assignFirst;
+    document.getElementById('sch-release').value=t.releaseTime;
+    document.getElementById('sch-first-duration').value=t.firstDurationMin;
+    document.getElementById('sch-second').value=t.secondAssignee;
+    document.getElementById('sch-second-duration').value=t.secondDurationMin;
+    document.getElementById('sch-grace').value=t.graceMin;
+    s.items.forEach(id=>{ const c=document.getElementById('mchk-'+id); if(c) c.checked=true; });
+  }else{
+    document.getElementById('sch-name').value=''; document.getElementById('sch-area').value='ip'; document.getElementById('sch-freq').value='daily'; document.getElementById('sch-assign').value='aid'; document.getElementById('sch-release').value='08:00'; document.getElementById('sch-first-duration').value='120'; document.getElementById('sch-second').value='tech'; document.getElementById('sch-second-duration').value='60'; document.getElementById('sch-grace').value='15';
+  }
+};
+
+saveSchedule = function(){
+  const name=document.getElementById('sch-name').value.trim();
+  const area=document.getElementById('sch-area').value;
+  const freq=document.getElementById('sch-freq').value;
+  const assign=document.getElementById('sch-assign').value;
+  const items=[...new Set([...document.querySelectorAll('#modal-med-list input:checked')].map(i=>parseInt(i.value)).concat(importedMedicationIds))];
+  if(!name){alert('أدخل اسم القائمة');return;}
+  if(!items.length){alert('اختر دواءً واحداً على الأقل أو ارفع ملف قائمة');return;}
+  const payload={name,area,freq,assignFirst:assign,items,active:true,releaseTime:document.getElementById('sch-release').value||'08:00',firstDurationMin:Number(document.getElementById('sch-first-duration').value||120),secondAssignee:document.getElementById('sch-second').value,secondDurationMin:Number(document.getElementById('sch-second-duration').value||0),graceMin:Number(document.getElementById('sch-grace').value||0)};
+  if(editingScheduleId){ const s=schedules.find(x=>x.id===editingScheduleId); Object.assign(s,payload, {updatedAt:today()}); }
+  else { const newId='SCH'+String(schedules.length+1).padStart(3,'0'); schedules.push({id:newId,...payload,createdAt:today()}); }
+  saveLocalData(); closeSchModal(); renderSchedules(); updateBadges(); renderMeds();
+};
+
+function normalizeImportedRows(rows){
+  const area=document.getElementById('sch-area').value;
+  const ids=[];
+  rows.forEach(r=>{
+    const name=(r['Medication Name']||r['Medication']||r['Name']||r['اسم الدواء']||r[0]||'').toString().trim();
+    if(!name) return;
+    const oracle=(r['Oracle Number']||r['Oracle #']||r['Oracle']||r['رقم اوراكل']||r[1]||'').toString().trim();
+    let med=medications.find(m=>m.name.toLowerCase()===name.toLowerCase() || (oracle && m.oracle===oracle));
+    if(!med){ med={id:Math.max(0,...medications.map(m=>m.id))+1,name,oracle,cat:'Imported',area}; medications.push(med); }
+    med.area=area; if(oracle) med.oracle=oracle; ids.push(med.id);
+  });
+  return [...new Set(ids)];
+}
+async function handleImportFile(e){
+  const file=e.target.files[0]; if(!file) return;
+  let rows=[];
+  if(file.name.toLowerCase().endsWith('.docx')){
+    if(!window.mammoth){ alert('تعذر تحميل قارئ Word. جرّب CSV/XLSX.'); return; }
+    const ab=await file.arrayBuffer();
+    const res=await mammoth.extractRawText({arrayBuffer:ab});
+    rows=res.value.split(/\n+/).map(line=>line.trim()).filter(Boolean).map(line=>{const parts=line.split(/\t|,|\|/); return {'Medication Name':parts[0], 'Oracle Number':parts[1]||''};});
+  }else{
+    if(!window.XLSX){ alert('تعذر تحميل قارئ Excel.'); return; }
+    const ab=await file.arrayBuffer();
+    const wb=XLSX.read(ab,{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]];
+    rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+    if(!rows.length){ const arr=XLSX.utils.sheet_to_json(ws,{header:1,defval:''}); rows=arr.map(r=>({'Medication Name':r[0], 'Oracle Number':r[1]||''})); }
+  }
+  importedMedicationIds=normalizeImportedRows(rows);
+  importedMedicationIds.forEach(id=>{ const c=document.getElementById('mchk-'+id); if(c) c.checked=true; });
+  document.getElementById('import-preview').innerHTML=`<div class="info-box"><i class="ti ti-check"></i>تم استيراد ${importedMedicationIds.length} دواء وربطها بالمنطقة المحددة.</div>`;
+  openScheduleModal(editingScheduleId); // refresh medication list after new meds
+  importedMedicationIds.forEach(id=>{ const c=document.getElementById('mchk-'+id); if(c) c.checked=true; });
+  document.getElementById('import-preview').innerHTML=`<div class="info-box"><i class="ti ti-check"></i>تم استيراد ${importedMedicationIds.length} دواء. راجع القائمة ثم اضغط حفظ.</div>`;
+}
+
+function renderPerformance(){
+  const container=document.getElementById('perf-container'); if(!container) return;
+  const range=document.getElementById('perf-range')?.value||'today', areaF=document.getElementById('perf-area')?.value||'all', roleF=document.getElementById('perf-role')?.value||'all';
+  const start=new Date(); start.setHours(0,0,0,0); if(range==='week') start.setDate(start.getDate()-7); if(range==='month') start.setMonth(start.getMonth()-1); if(range==='all') start.setFullYear(2000);
+  const rows=[];
+  instances.forEach(inst=>{
+    if(new Date(inst.date).getTime()<start.getTime()) return;
+    if(areaF!=='all' && inst.area!==areaF) return;
+    const sch=schedules.find(s=>s.id===inst.schedId)||{}; const t=getScheduleTiming(sch);
+    const aidUser=userFor(inst.area,'aid');
+    if((inst.assignFirst==='aid') && (roleF==='all'||roleF==='aid')) rows.push({user:aidUser,role:'AID',area:inst.area,list:inst.name,start:inst.aidAssignedAtISO||inst.createdAtISO,submit:inst.aidSubmittedAtISO,duration:inst.firstDurationMin||t.firstDurationMin,grace:inst.graceMin||t.graceMin});
+    const techUser=userFor(inst.area,'tech');
+    if((inst.assignFirst==='tech'||inst.secondAssignee==='tech'||t.secondAssignee==='tech') && (roleF==='all'||roleF==='tech')) rows.push({user:techUser,role:'TECH',area:inst.area,list:inst.name,start:inst.techAssignedAtISO,submit:inst.techSubmittedAtISO,duration:(inst.assignFirst==='tech'?inst.firstDurationMin:inst.secondDurationMin)||t.secondDurationMin,grace:inst.graceMin||t.graceMin});
+  });
+  const users={}; rows.forEach(r=>{ const perf=performanceLabel(r.start,r.submit,r.duration,r.grace,r.user); r.perf=perf; users[r.user]??={user:r.user,role:r.role,area:r.area,assigned:0,done:0,late:0,excused:0,scoreSum:0,scoreN:0}; const u=users[r.user]; u.assigned++; if(r.submit)u.done++; if(perf.label.includes('Late'))u.late++; if(perf.label==='Excused')u.excused++; if(perf.score!==null){u.scoreSum+=perf.score;u.scoreN++;} });
+  const summary=Object.values(users);
+  container.innerHTML=`<div class="stats-grid">${summary.map(u=>`<div class="stat-card"><div class="stat-num">${u.scoreN?Math.round(u.scoreSum/u.scoreN):'—'}</div><div class="stat-lbl">${u.user} Score</div><div style="font-size:11px;color:var(--text-secondary);margin-top:6px">Assigned ${u.assigned} · Done ${u.done} · Late ${u.late} · Excused ${u.excused}</div></div>`).join('')}</div>
+  <div class="card"><div class="card-header"><span class="card-title">تفاصيل الأداء</span></div><table class="med-table"><thead><tr><th>الموظف</th><th>القائمة</th><th>البداية</th><th>التسليم</th><th>المدة</th><th>الحالة</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.user}</td><td>${r.list}</td><td>${r.start?new Date(r.start).toLocaleString('ar-SA'):'Waiting'}</td><td>${r.submit?new Date(r.submit).toLocaleString('ar-SA'):'—'}</td><td>${r.duration}m + ${r.grace}m</td><td><span class="status-pill ${r.perf.cls}">${r.perf.label}</span></td></tr>`).join('')}</tbody></table></div>`;
+  renderExemptions();
+}
+function openExemptionModal(){ document.getElementById('exempt-modal').classList.add('open'); const n=new Date(); document.getElementById('ex-from').value=n.toISOString().slice(0,16); const e=new Date(n.getTime()+8*3600000); document.getElementById('ex-to').value=e.toISOString().slice(0,16); }
+function closeExemptionModal(){ document.getElementById('exempt-modal').classList.remove('open'); }
+function saveExemption(){ const ex={id:'EX'+Date.now(),user:document.getElementById('ex-user').value,type:document.getElementById('ex-type').value,from:document.getElementById('ex-from').value,to:document.getElementById('ex-to').value,mode:document.getElementById('ex-mode').value,reason:document.getElementById('ex-reason').value}; if(!ex.from||!ex.to){alert('حدد فترة الإعفاء');return;} exemptions.push(ex); saveLocalData(); closeExemptionModal(); renderPerformance(); }
+function deleteExemption(id){ exemptions=exemptions.filter(e=>e.id!==id); saveLocalData(); renderPerformance(); }
+function renderExemptions(){ const el=document.getElementById('exempt-container'); if(!el)return; if(!exemptions.length){el.innerHTML='<div class="empty-state">لا توجد إعفاءات</div>';return;} el.innerHTML=`<table class="med-table"><thead><tr><th>الموظف</th><th>النوع</th><th>الفترة</th><th>الإجراء</th><th></th></tr></thead><tbody>${exemptions.map(e=>`<tr><td>${e.user}</td><td>${e.type}</td><td>${e.from} → ${e.to}</td><td>${e.mode}</td><td><button class="btn btn-xs btn-danger" onclick="deleteExemption('${e.id}')">حذف</button></td></tr>`).join('')}</tbody></table>`; }
+
+
+
+// ============ SPECIAL PDF WORKFLOW + WORKFLOW MONITOR + ZERO DASHBOARD ============
+let specialPdfDraft = {fileName:'', items:[]};
+if(window.pdfjsLib){ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'; }
+function escapeHtml(str){ return String(str??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+function specialStageLabel(stage){ return {aid_check:'عند IP-AID للفحص',tech_missing:'عند IP-TECH لمعالجة النواقص',mmc_received:'وصلت MMC'}[stage]||stage; }
+function getMySpecialLists(){
+  if(currentRole==='mmc') return specialLists;
+  if(currentRole==='aid' && userArea==='ip') return specialLists.filter(l=>l.stage==='aid_check'||l.stage==='mmc_received');
+  if(currentRole==='tech' && userArea==='ip') return specialLists.filter(l=>l.createdBy==='IP-TECH'||l.stage==='tech_missing'||l.stage==='mmc_received');
+  return [];
+}
+function makeSpecialItemsFromText(text){
+  let lines=text.split(/\r?\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(x=>x.length>2 && !/^page\s*\d+/i.test(x));
+  lines=[...new Set(lines)].slice(0,400);
+  return lines.map((text,i)=>({id:'ITM'+String(i+1).padStart(3,'0'),text,aidStatus:'',techStatus:''}));
+}
+async function handleSpecialPdfUpload(e){
+  const file=e.target.files[0]; if(!file) return;
+  if(!window.pdfjsLib){ alert('تعذر تحميل قارئ PDF. تأكد من اتصال الإنترنت ثم أعد المحاولة.'); return; }
+  const ab=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+  let text='';
+  for(let p=1;p<=pdf.numPages;p++){ const page=await pdf.getPage(p); const content=await page.getTextContent(); text += content.items.map(it=>it.str).join('\n')+'\n'; }
+  specialPdfDraft={fileName:file.name,items:makeSpecialItemsFromText(text)};
+  renderSpecialPdf();
+}
+function removeDraftItem(id){ specialPdfDraft.items=specialPdfDraft.items.filter(i=>i.id!==id); renderSpecialPdf(); }
+function submitSpecialDraftToAid(){
+  if(!specialPdfDraft.items.length){alert('ارفع PDF أولاً');return;}
+  const id='PDF'+String(specialLists.length+1).padStart(3,'0');
+  const list={id,type:'special_pdf',name:'Special PDF List '+id,area:'ip',sourceFileName:specialPdfDraft.fileName,items:specialPdfDraft.items,stage:'aid_check',createdBy:'IP-TECH',createdAtISO:nowISO(),techCreateSubmittedAtISO:nowISO(),aidAssignedAtISO:nowISO(),firstDurationMin:30,aidDurationMin:120,techMissingDurationMin:60,graceMin:15};
+  specialLists.unshift(list); specialPdfDraft={fileName:'',items:[]}; saveLocalData(); renderSpecialPdf(); updateBadges(); alert('تم إرسال القائمة إلى IP-AID');
+}
+function setSpecialAidStatus(listId,itemId,val){ const l=specialLists.find(x=>x.id===listId); const it=l?.items.find(i=>i.id===itemId); if(it){it.aidStatus=val; saveLocalData();} }
+function submitSpecialAidToTech(listId){
+  const l=specialLists.find(x=>x.id===listId); if(!l)return;
+  const un=l.items.filter(i=>!i.aidStatus); if(un.length){alert('حدد Available أو Missing لكل العناصر قبل الإرسال');return;}
+  l.aidSubmittedAtISO=nowISO();
+  if(l.items.some(i=>i.aidStatus==='missing')){ l.stage='tech_missing'; l.techMissingAssignedAtISO=nowISO(); alert('تم إرسال العناصر الناقصة إلى IP-TECH'); }
+  else { l.stage='mmc_received'; l.techMissingAssignedAtISO=null; l.techMissingSubmittedAtISO=null; alert('كل العناصر Available وتم إرسال التقرير إلى MMC'); }
+  saveLocalData(); renderSpecialPdf(); updateBadges();
+}
+function setSpecialTechStatus(listId,itemId,val){ const l=specialLists.find(x=>x.id===listId); const it=l?.items.find(i=>i.id===itemId); if(it){it.techStatus=val; saveLocalData();} }
+function submitSpecialTechToMMC(listId){
+  const l=specialLists.find(x=>x.id===listId); if(!l)return;
+  const missing=l.items.filter(i=>i.aidStatus==='missing'); const un=missing.filter(i=>!i.techStatus);
+  if(un.length){alert('حدد NIL أو REQUESTED لكل العناصر الناقصة قبل الإرسال');return;}
+  l.techMissingSubmittedAtISO=nowISO(); l.stage='mmc_received'; saveLocalData(); renderSpecialPdf(); updateBadges(); alert('تم إرسال التقرير النهائي إلى MMC');
+}
+function renderSpecialPdf(){
+  const el=document.getElementById('specialpdf-container'); if(!el)return;
+  let html='';
+  if(currentRole==='tech'&&userArea==='ip'){
+    html+=`<div class="card"><div class="card-header"><span class="card-title">إنشاء قائمة خاصة من PDF</span></div>
+      <div class="form-row"><label class="form-label">رفع PDF</label><input class="form-input" type="file" accept=".pdf" onchange="handleSpecialPdfUpload(event)"></div>
+      <div class="modal-note">سيتم قراءة النص من PDF وتحويل كل سطر إلى Item مع إمكانية حذف الأسطر غير المطلوبة قبل الإرسال.</div>
+      ${specialPdfDraft.items.length?`<div class="divider"></div><div style="font-size:13px;margin-bottom:8px">${escapeHtml(specialPdfDraft.fileName)} — ${specialPdfDraft.items.length} item</div><table class="med-table"><thead><tr><th>Item</th><th style="width:80px">حذف</th></tr></thead><tbody>${specialPdfDraft.items.map(i=>`<tr><td>${escapeHtml(i.text)}</td><td><button class="btn btn-xs btn-danger" onclick="removeDraftItem('${i.id}')">حذف</button></td></tr>`).join('')}</tbody></table><div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="btn btn-primary" onclick="submitSpecialDraftToAid()"><i class="ti ti-send"></i>Submit to AID</button></div>`:''}
+    </div>`;
+    const miss=specialLists.filter(l=>l.stage==='tech_missing');
+    html+=`<div class="card"><div class="card-header"><span class="card-title">Missing Items Queue</span></div>${miss.length?miss.map(l=>`<div class="report-row"><div style="display:flex;justify-content:space-between;align-items:center"><div><b>${l.id}</b> — ${escapeHtml(l.sourceFileName)}<div style="font-size:11px;color:var(--text-secondary)">${new Date(l.techMissingAssignedAtISO).toLocaleString('ar-SA')}</div></div><span class="status-pill s-submitted">${l.items.filter(i=>i.aidStatus==='missing').length} Missing</span></div><table class="med-table" style="margin-top:10px"><thead><tr><th>Item</th><th>Status</th></tr></thead><tbody>${l.items.filter(i=>i.aidStatus==='missing').map(i=>`<tr><td>${escapeHtml(i.text)}</td><td><select class="tech-select ${i.techStatus||''}" onchange="setSpecialTechStatus('${l.id}','${i.id}',this.value)"><option value="">— اختر —</option><option value="nil" ${i.techStatus==='nil'?'selected':''}>NIL</option><option value="requested" ${i.techStatus==='requested'?'selected':''}>REQUESTED</option></select></td></tr>`).join('')}</tbody></table><div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="btn btn-success btn-sm" onclick="submitSpecialTechToMMC('${l.id}')">Submit to MMC</button></div></div>`).join(''):'<div class="empty-state">لا توجد عناصر ناقصة حالياً</div>'}</div>`;
+  }
+  if(currentRole==='aid'&&userArea==='ip'){
+    const lists=specialLists.filter(l=>l.stage==='aid_check');
+    html+=`<div class="card"><div class="card-header"><span class="card-title">Special Lists from IP-TECH</span></div>${lists.length?lists.map(l=>`<div class="report-row"><div style="display:flex;justify-content:space-between;align-items:center"><div><b>${l.id}</b> — ${escapeHtml(l.sourceFileName)}<div style="font-size:11px;color:var(--text-secondary)">${new Date(l.aidAssignedAtISO).toLocaleString('ar-SA')}</div></div><span class="status-pill s-pending">AID Check</span></div><table class="med-table" style="margin-top:10px"><thead><tr><th>Item</th><th>Status</th></tr></thead><tbody>${l.items.map(i=>`<tr><td>${escapeHtml(i.text)}</td><td><select class="tech-select ${i.aidStatus==='missing'?'nil':i.aidStatus==='available'?'requested':''}" onchange="setSpecialAidStatus('${l.id}','${i.id}',this.value)"><option value="">— اختر —</option><option value="available" ${i.aidStatus==='available'?'selected':''}>Available</option><option value="missing" ${i.aidStatus==='missing'?'selected':''}>Missing</option></select></td></tr>`).join('')}</tbody></table><div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="btn btn-primary btn-sm" onclick="submitSpecialAidToTech('${l.id}')">Submit to TECH</button></div></div>`).join(''):'<div class="empty-state">لا توجد قوائم خاصة بانتظارك</div>'}</div>`;
+  }
+  if(currentRole==='mmc'){
+    const lists=specialLists;
+    html+=`<div class="card"><div class="card-header"><span class="card-title">تقارير PDF الخاصة</span></div>${lists.length?lists.map(l=>`<div class="report-row"><div style="display:flex;justify-content:space-between;align-items:center"><div><b>${l.id}</b> — ${escapeHtml(l.sourceFileName)}<div style="font-size:11px;color:var(--text-secondary)">Created: ${new Date(l.createdAtISO).toLocaleString('ar-SA')}</div></div><span class="status-pill ${l.stage==='mmc_received'?'s-completed':'s-pending'}">${specialStageLabel(l.stage)}</span></div>${l.stage==='mmc_received'?`<table class="med-table" style="margin-top:10px"><thead><tr><th>Item</th><th>AID</th><th>TECH</th></tr></thead><tbody>${l.items.map(i=>`<tr><td>${escapeHtml(i.text)}</td><td>${i.aidStatus==='available'?'<span style="color:#1D9E75">Available</span>':'<span class="nil-tag">Missing</span>'}</td><td>${i.techStatus==='nil'?'<span class="nil-tag">NIL</span>':i.techStatus==='requested'?'<span class="req-tag">REQUESTED</span>':'—'}</td></tr>`).join('')}</tbody></table>`:''}</div>`).join(''):'<div class="empty-state">لا توجد قوائم PDF بعد</div>'}</div>`;
+  }
+  if(!html) html='<div class="empty-state">هذه الصفحة متاحة فقط لـ IP-TECH و IP-AID و MMC</div>';
+  el.innerHTML=html;
+}
+function workflowRows(){
+  const rows=[];
+  instances.forEach(i=>{
+    let stage='MMC Review', assigned='MMC', cls='s-reviewed';
+    if(i.status==='pending'){stage='AID Check'; assigned=userFor(i.area,'aid'); cls='s-pending';}
+    else if(i.status==='submitted'){stage='TECH Review Missing'; assigned=userFor(i.area,'tech'); cls='s-submitted';}
+    else if(i.status==='completed'||i.status==='reviewed'){stage='Completed / MMC'; assigned='MMC'; cls='s-completed';}
+    rows.push({id:i.id,type:'Scheduled',name:i.name,area:i.area,stage,assigned,status:getStatusLabel(i.status),cls,date:i.date});
+  });
+  specialLists.forEach(l=>{
+    const map={aid_check:['PDF AID Check','IP-AID','s-pending'],tech_missing:['PDF Missing Review','IP-TECH','s-submitted'],mmc_received:['PDF Completed','MMC','s-completed']};
+    const m=map[l.stage]||[l.stage,'—','s-pending']; rows.push({id:l.id,type:'Special PDF',name:l.sourceFileName,area:'ip',stage:m[0],assigned:m[1],status:specialStageLabel(l.stage),cls:m[2],date:(l.createdAtISO||'').slice(0,10)});
+  });
+  return rows;
+}
+function renderWorkflowMonitor(){
+  const el=document.getElementById('workflow-container'); if(!el)return; const rows=workflowRows();
+  el.innerHTML=`<div class="card"><table class="med-table"><thead><tr><th>ID</th><th>Type</th><th>Name</th><th>Area</th><th>Current Stage</th><th>Assigned To</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.id}</td><td>${r.type}</td><td>${escapeHtml(r.name)}</td><td><span class="area-tag ${r.area==='ip'?'area-ip':'area-opp'}">${String(r.area).toUpperCase()}</span></td><td>${r.stage}</td><td>${r.assigned}</td><td><span class="status-pill ${r.cls}">${r.status}</span></td><td>${r.date||''}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function getZeroRows(){
+  const rows=[];
+  instances.forEach(inst=>{ (inst.items||[]).forEach(id=>{ const m=getMed(id); if(m && inst.techNotes?.[id]==='nil') rows.push({med:m.name,oracle:m.oracle,area:inst.area,date:inst.date,source:inst.name,type:'Scheduled'}); }); });
+  specialLists.forEach(l=>{ l.items.filter(i=>i.techStatus==='nil').forEach(i=>rows.push({med:i.text,oracle:'',area:'ip',date:(l.techMissingSubmittedAtISO||l.createdAtISO||'').slice(0,10),source:l.id+' '+l.sourceFileName,type:'Special PDF'})); });
+  return rows;
+}
+function renderZeroDashboard(){
+  const el=document.getElementById('zero-container'); if(!el)return; let rows=getZeroRows();
+  const area=document.getElementById('zero-area')?.value||'all', from=document.getElementById('zero-from')?.value, to=document.getElementById('zero-to')?.value;
+  if(area!=='all') rows=rows.filter(r=>r.area===area); if(from) rows=rows.filter(r=>r.date>=from); if(to) rows=rows.filter(r=>r.date<=to);
+  el.innerHTML=`<div class="stats-grid"><div class="stat-card"><div class="stat-num" style="color:#E24B4A">${rows.length}</div><div class="stat-lbl">Total NIL</div></div><div class="stat-card"><div class="stat-num">${new Set(rows.map(r=>r.med)).size}</div><div class="stat-lbl">Unique Items</div></div></div><div class="card"><table class="med-table"><thead><tr><th>Medication / Item</th><th>Oracle</th><th>Area</th><th>Date</th><th>Source</th><th>Type</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${escapeHtml(r.med)}</td><td>${escapeHtml(r.oracle)}</td><td><span class="area-tag ${r.area==='ip'?'area-ip':'area-opp'}">${String(r.area).toUpperCase()}</span></td><td>${r.date}</td><td>${escapeHtml(r.source)}</td><td>${r.type}</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text-secondary)">لا توجد عناصر NIL</td></tr>'}</tbody></table></div>`;
+}
+function exportZeroCsv(){
+  const rows=getZeroRows(); if(!rows.length){alert('لا توجد بيانات NIL للتصدير');return;}
+  let csv='\uFEFFMedication,Oracle,Area,Date,Source,Type\n'; rows.forEach(r=>{csv+=`"${String(r.med).replace(/"/g,'""')}","${String(r.oracle||'').replace(/"/g,'""')}",${String(r.area).toUpperCase()},${r.date},"${String(r.source).replace(/"/g,'""')}",${r.type}\n`;});
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`Zero_NIL_Dashboard_${today()}.csv`; a.click(); URL.revokeObjectURL(url);
+}
+
+// Add special PDF tasks to performance calculation
+const _oldRenderPerformance = renderPerformance;
+renderPerformance = function(){
+  _oldRenderPerformance();
+  const container=document.getElementById('perf-container'); if(!container) return;
+  const range=document.getElementById('perf-range')?.value||'today', areaF=document.getElementById('perf-area')?.value||'all', roleF=document.getElementById('perf-role')?.value||'all';
+  const start=new Date(); start.setHours(0,0,0,0); if(range==='week') start.setDate(start.getDate()-7); if(range==='month') start.setMonth(start.getMonth()-1); if(range==='all') start.setFullYear(2000);
+  const rows=[];
+  specialLists.forEach(l=>{
+    if(new Date(l.createdAtISO).getTime()<start.getTime()) return; if(areaF!=='all'&&areaF!=='ip') return;
+    if(roleF==='all'||roleF==='tech') rows.push({user:'IP-TECH',role:'TECH',list:l.id+' Create PDF',start:l.createdAtISO,submit:l.techCreateSubmittedAtISO,duration:l.firstDurationMin||30,grace:l.graceMin||15});
+    if(roleF==='all'||roleF==='aid') rows.push({user:'IP-AID',role:'AID',list:l.id+' Physical Check',start:l.aidAssignedAtISO,submit:l.aidSubmittedAtISO,duration:l.aidDurationMin||120,grace:l.graceMin||15});
+    if((roleF==='all'||roleF==='tech') && l.techMissingAssignedAtISO) rows.push({user:'IP-TECH',role:'TECH',list:l.id+' Missing Review',start:l.techMissingAssignedAtISO,submit:l.techMissingSubmittedAtISO,duration:l.techMissingDurationMin||60,grace:l.graceMin||15});
+  });
+  if(!rows.length) return;
+  rows.forEach(r=>r.perf=performanceLabel(r.start,r.submit,r.duration,r.grace,r.user));
+  container.innerHTML += `<div class="card"><div class="card-header"><span class="card-title">أداء قوائم PDF الخاصة</span></div><table class="med-table"><thead><tr><th>الموظف</th><th>المهمة</th><th>البداية</th><th>التسليم</th><th>المدة</th><th>الحالة</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.user}</td><td>${escapeHtml(r.list)}</td><td>${r.start?new Date(r.start).toLocaleString('ar-SA'):'Waiting'}</td><td>${r.submit?new Date(r.submit).toLocaleString('ar-SA'):'—'}</td><td>${r.duration}m + ${r.grace}m</td><td><span class="status-pill ${r.perf.cls}">${r.perf.label}</span></td></tr>`).join('')}</tbody></table></div>`;
+};
+
+// Init
+setLang('ar');
+</script>
+</body>
+</html>
